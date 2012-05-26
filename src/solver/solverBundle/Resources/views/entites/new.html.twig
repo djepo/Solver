@@ -1,0 +1,16 @@
+<h1>entites creation</h1>
+
+<form action="{{ path('entites_create') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <p>
+        <button type="submit">Create</button>
+    </p>
+</form>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('entites') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>

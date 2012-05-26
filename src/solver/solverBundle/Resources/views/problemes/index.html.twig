@@ -1,0 +1,199 @@
+{%if symptome is defined%}
+    <div id="accordionResizer" style="overflow:auto; padding:10px;" class="ui-widget-content">
+        <div id="accordion">
+            <h3>
+                <a href="#">
+                    {{symptome.libelle}} {%if symptome.problemesamont|length>0%}({{symptome.problemesamont|length}} causes possible) {%endif%}
+                </a>
+            </h3>
+            {% set problemes=symptome.problemesamont %}
+
+            {% set level=0 %}                                               {# initialisation du niveau d'arborescence parcourue#}
+            {% set ids={'entite_id':entite.id, 'symptome_id':symptome.id} %}{# mémorisation des id parents (entité et symptome demandé #}
+            {% set problems_chaining=[] %}                                  {# initialisation de la chaine des problèmes possibles #}
+
+            {#Comptage du nombre total de pb résolus dans ce problème#}
+            {%set countTotalRésolutionPb=0%}
+            {%for i in symptome.solvinglogproblemeaval%}
+                {%set countTotalRésolutionPb=countTotalRésolutionPb+1%}
+            {%endfor%}
+
+
+            <div>
+                {# liste des problèmes liés au symptome #}
+                {%include('solversolverBundle:blocs:accordeon_listeProblemesParProbleme.html.twig')%}
+            </div>
+
+            {%if chaine_problemes is defined %}
+                {#Enchainement des problèmes faisant suite au symptome#}
+                {% set level=1 %}                                               {# initialisation du niveau d'arborescence parcourue#}
+                {% for probleme in chaine_problemes %}
+                    <h3><a href="#">
+                            {{probleme.libelle}} {%if probleme.problemesamont|length>0%}({{probleme.problemesamont|length}} causes possible) {%endif%}
+                        </a>
+                    </h3>
+                    {% set problemes=probleme.problemesamont %}
+
+                    {% set problems_chaining=problems_chaining|merge([probleme.id]) %}    {# mémorisation du problème actuellement parcouru (ajout a la chaine déjà existante) #}
+
+                    {%set mémo2=problems_chaining %} {# Mémorisation de l'enchainement, pour réinjection ultérieure#}
+                    <div>
+                        {%include('solversolverBundle:blocs:accordeon_listeProblemesParProbleme.html.twig')%}
+                    </div>
+                    {% set problems_chaining=mémo2 %}    {# Une fois tous les sous problèmes explorés, on réinjecte l'enchainement mémorisé avant l'exploration en profondeur #}
+                {%endfor%}
+            {%endif%}
+        </div>
+    </div>
+
+    {# CALCUL DE LA SOLUTION SELON QUE L'ON EST SUR UN SYMPTOME OU UN PROBLEME #}
+    {%if problème_sélectionné|length>0 %}
+        {% if problème_sélectionné.solution is defined %}
+            {% if problème_sélectionné.solution|length!=0 %}
+                {%set solution=problème_sélectionné.solution %}
+            {%endif%}
+        {%endif%}
+    {%else%}
+        {% if symptome is defined %}
+            {% if symptome.solution is defined %}
+                {% if symptome.solution|length!=0 %}
+                    {%set solution=symptome.solution %}
+                {%endif%}
+            {%endif%}
+        {%endif%}
+    {%endif%}
+    {# FIN CALCUL SOLUTION #}
+
+    {# Conteneurs de la solution liée au problème sélectionné #}
+    {% if not xhr_incoming is defined %}
+    <div id="conteneur_solution_direct">
+        <img class="solution_ajax_work" src="{{asset('bundles/solvermain/images/indicator_snake.gif')}}"></img>
+        <div id="conteneur_solution"  style="overflow:auto; padding:10px;margin-top: 10px;  " class="ui-widget-content">        
+            <div id="solution">
+                {%if solution is defined %}
+                    <h3><a href="#">Solution au problème: {{solution.probleme.libelle}}</a></h3>
+                    <div>{{solution.libelle}}</div>
+                {%else%}
+                    <h3><a href="#">Aucune solution à proposer</a></h3>
+                    <div></div>
+                {%endif%}
+            </div>        
+        </div>  
+     </div>
+    {%endif%}
+{%else%}
+    {# Affichage des symptomes possibles par entité #}
+    {%include('solversolverBundle:blocs:accordeon_listeProblemesParEntite.html.twig')%}
+{%endif%}
+
+<script>
+    var xhr_accordeon;    //variable globale représentant l'objet ajax gérant l'accordéon
+    var xhr_solution;
+    
+    $(document).ready(function(){
+        //initialisation de l'accordéon des problèmes
+        $( "#accordion" ).accordion({
+            fillSpace: false,
+            autoHeight: false,
+            collapsible: true,
+            {%if xhr_incoming is defined %}
+                //active: "h3:last",
+            {%else%}
+            {%if chaine_problemes is defined %}
+                 {% if chaine_problemes|length>0 %}
+                    {% if chaine_problemes[chaine_problemes|length-1].problemesamont|length>0 %}
+                        active: "h3:last",
+                    {%else%}
+                        active: "none",
+                    {%endif%}
+                {%else%}
+                    active: "h3:last",
+                {%endif%}
+            {%else%}
+                {%if symptome is defined %}
+                    {%if symptome.problemesamont|length>0 %}
+                        active: "h3:last",
+                    {%else%}
+                        active: "none",
+                    {%endif%}
+                {%else%}
+                    active: "none",
+                {%endif%}
+            {%endif%}
+            {%endif%}
+        });
+
+        {% if not xhr_incoming is defined %}
+            //initialisation de l'accordéon des solutions        
+            $('#solution').accordion({
+                fillSpace:  false,
+                autoHeight: false,
+                collapsible:true,
+                {% if problème_sélectionné.solution is defined %}
+                    {% if problème_sélectionné.solution|length==0 %}
+                active:     'none',
+                    {%else%}
+                active: 'h3:last',
+                    {% endif %}
+                {%else%}
+                active: 'none',
+                {%endif%}
+            });
+        {%endif%}
+    });
+
+    //Gestion de l'accordéon en ajax:
+    // un clic sur un problème amont va rechercher et affcher ce problème
+    $(".ajax_pb_amont").click(function(){
+        //var adresse=$(this).children('a').attr("href");
+        var adresse=$(this).children('a').attr("href");
+
+        if (xhr_accordeon){         //si il y a déjà une requête ajax qui tourne pour l'accordéon
+            xhr_accordeon.abort();  //on l'annule
+            $(".accordeon_ajax_work").hide(); //cache tous les indicateurs ajax en activité si on demande l'annulation
+        }
+
+        $(this).children(1).show(); //affiche l'indicateur de travail ajax
+
+        xhr_accordeon=$.ajax({
+           type: "POST",
+           url: adresse,
+           cache: false,
+           timeout: 10000,
+           success: function(retour){
+                        //injection du code html de retour dans la balise #conteneur_accordeon_ajax
+                        $("#conteneur_accordeon_ajax").html(retour);
+                        $("#accordion").accordion('activate', 'h3:last');
+                    },
+           error: function(XMLHttpRequest, textStatus, errorThrown){
+                        //en cas d'erreur de la fonction ajax, on va tenter d'y aller en get
+                        if (textStatus!="abort"){
+                            $(location).attr("href",adresse);
+                        }
+                    }
+        });
+        
+        if (xhr_solution){         //si il y a déjà une requête ajax qui tourne pour la solution
+            xhr_solution.abort();  //on l'annule
+            //$(".accordeon_ajax_work").hide(); //cache tous les indicateurs ajax en activité si on demande l'annulation
+        }
+                
+        $('.solution_ajax_work').show();
+        xhr_solution=$.ajax({
+            type: "POST",
+            url: $(this).children('a').attr("link_solution"),
+            cache:false,
+            timeout:10000,
+            success: function (retour){
+                $('#conteneur_solution_direct').html('');   //On efface le conteneur de solution direct, si il existe
+                $("#conteneur_solution_ajax").html(retour); //on balance le resultat dans la fenetre de conteneur de solution ajax
+                $('.solution_ajax_work').hide();            //on efface l'animation ajax
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+                    $('.solution_ajax_work').hide();            //on efface l'animation ajax
+                }
+        });
+        
+        return false;
+    });
+</script>

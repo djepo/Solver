@@ -1,0 +1,21 @@
+<ul class="record_actions">
+    <li  style="text-align: right;margin-bottom: -20px;">
+        <a href="{{ path('entites_edit', { 'id': entite.id }) }}">Edit</a>
+    </li>
+</ul>
+<h1 style="text-align: center; padding-bottom: 10px;">{{ entite.libelle }}</h1>
+
+{# si l'entité a des problèmes potentiels, on les affiche #}
+{% if entite.problemes|length>0 %}
+    {%set problemes=entite.problemes %}   
+    <div id="conteneur_accordeon_ajax">
+        {%include "solversolverBundle:problemes:index.html.twig" %}
+    </div>
+    
+    
+    <div id="conteneur_solution_ajax">        
+    </div>
+{%else%}
+    <p>Personne n'a encore détecté de problème !</p>
+    <p>Si vous avez un problème, et que vous le résolvez, n'hésitez pas contribuer, pour en faire part à la communauté.</p>
+{%endif%}

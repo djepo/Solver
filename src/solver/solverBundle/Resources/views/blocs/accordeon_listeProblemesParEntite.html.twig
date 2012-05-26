@@ -1,0 +1,31 @@
+<h2>{{problemes|length}} symptômes dans la base</h2>
+<h3>(classement par ordre d'occurence)</h3>
+
+<div style="overflow: auto">
+<ul class="chart" style="position: relative">
+{#ancienne version, sans symptomes
+{% for probleme in problemes %}
+#}
+        
+{% for s in symptomes %}
+        {%if s.total!=0%}
+            {% set pourcentage=s.occurenceResolutionPb/s.total*100%}
+        {%else%}
+            {%set pourcentage=0%}
+        {%endif%}
+                    
+        
+        <li>
+            {#<a href="{{path('select_entite_pb', {'entite_id': probleme.entite.id, 'symptome_id': probleme.id})}}">{{ probleme.libelle }}</a>
+            {{probleme.solvinglogproblemeamont|length}}
+            #}
+            <div class="graph">
+                <span class="bar" style="width: {{pourcentage}}%"></span>
+            </div>
+            <a class="bar_title" href="{{path('select_entite_pb', {'entite_id': s.entite_id, 'symptome_id': s.id})}}">
+                {{ s.libelle }} ({{pourcentage|number_format(2)}}%)
+            </a>
+        </li>        
+{% endfor %}
+</ul>
+</div>

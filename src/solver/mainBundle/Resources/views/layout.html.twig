@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>{% block title %}UTS{% endblock %}</title>
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('bundles/solvermain/css/layout.css') }}" type="text/css" media="all" />
+            <link rel="stylesheet" href="{{ asset('bundles/solvermain/css/flashes.css') }}" type="text/css" media="all" />
+            <link rel="stylesheet" href="{{ asset('bundles/solvermain/css/buttons.css') }}" type="text/css" media="all" />            
+            <link rel="stylesheet" href="{{ asset('bundles/solvermain/js/jquery/css/base/jquery.ui.all.css') }}" type="text/css" media="all" />
+        {% endblock %}
+
+        {% block included_js %}
+            <script src="{{ asset('bundles/solvermain/js/jquery/jquery-1.7.1.min.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/js/jquery/jquery.easing.1.3.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/js/jquery/ui/jquery-ui-1.8.17.custom.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/js/jquery/ui/minified/jquery.effects.slide.min.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/js/jquery/ui/minified/jquery.effects.core.min.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/js/jquery/ui/minified/jquery.ui.widget.min.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/js/jquery/ui/minified/jquery.ui.accordion.min.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/js/jquery/jstree/jquery.jstree.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/js/jquery/jstree/jquery.cookie.js') }}"></script> {#requis par jstree#}
+        {% endblock %}
+
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+                <div id="header_left">
+                    <div class="site_title">Solver</div>
+                </div>
+                <div id="header_right">
+                    <form id="header-search" method="GET" action="">
+                        <label for="header-search-field"><span>Quel est votre problème ?</span></label>
+                        <input name="q" id="header-search-field" type="search" placeholder="Quel est votre problème ?" class="medium_txt">
+                        <input type="submit" class="symfony-button-grey" value="OK" />
+                    </form>
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+
+            <div id="middle">
+
+                {% if app.session.flash('notice') %}
+                <div class="flash-message">
+                    <em>Notice</em>: {{ app.session.flash('notice') }}
+                </div>
+                {% endif %}
+
+                <div id="middle_left">
+                    {# Emplacement du treeview #}
+                        <div class="show_hide_treeview" style="display: table">
+                            <p style="display: table-cell; vertical-align: middle;font-size:12px"><</p>
+                        </div>
+
+                        <div class="conteneur_treeview">
+                            <div class="titre_treeview"><h2 style="margin-bottom:0px;">Arborescence de recherche</h2></div>
+                            <div class="treeview">
+                                {%include "solversolverBundle:blocs:treeview_listeProblemesParEntite.html.twig" %}
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div id="middle_right">
+                        <div class="content">
+                        {% block content %}
+                                {%if entite is defined %}
+                                    {# si on arrive sur la page avec une id d'entité, on l'affiche #}
+                                    {%include "solversolverBundle:entites:show.html.twig" %}     
+                                {%else%}
+                                    {# si on arrive sur la page sans id d'entité, on affiche la pge de bienvenue #}
+                                    {%include "solvermainBundle:blocs:welcome.html.twig" %}
+                                {%endif%}                                
+                        {% endblock %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="footer">
+                        footer
+                    </div>
+                </div>
+
+        {% block javascripts %}
+            {# Cacher / montrer treeview #}
+                <script>
+                    $(".show_hide_treeview").click(function () {
+                        if($("#middle_left").is(".treeview_hidden")){                            
+                            $("#middle_left").animate({width:"200"},1000,"easeOutBounce");
+                            $("#middle_left").removeClass("treeview_hidden");
+                            $(".show_hide_treeview p").text("<");
+                        }
+                        else {
+                            $("#middle_left").addClass("treeview_hidden");                            
+                            $("#middle_left").animate({width:"10"},1000,"easeOutBounce");                             
+                            $(".show_hide_treeview p").text(">");
+                       }                       
+                    });
+                </script>
+                
+                {# générer le treeview de démo (sur du html statique) #}
+                <script>                
+                    //$(function () {  
+                    $(document).ready(function () {
+                        $(".treeview").jstree({  
+                            "themes": {
+                                "theme": "default",
+                                "dots": true,
+                                "icons": true
+                                },
+                            "core" : {animation:0},
+                            "plugins" : [ "themes", "html_data","search", "cookies"]  
+                        }); 
+                        
+                        {%if entite.problemes is defined %}
+                            $("#middle_left").addClass("treeview_hidden");                            
+                            //$("#middle_left").animate({width:"10"},1000,"easeOutBounce");                             
+                            $("#middle_left").attr('style','width: 10px');
+                            $(".show_hide_treeview p").text(">");   
+                        {%endif%}
+                    }); 
+                </script>
+                
+                {# Mise en surbrillance des éléments parcourus #}
+                {#
+                <script>
+                    $(".treeview").bind("loaded.jstree", function (event, data) {  
+                        {% if entite is defined %}
+                            $(".treeview").jstree("search","{{entite.libelle}}");  
+                        {% else %}
+                            $(".treeview").jstree("clear_search");
+                        {%endif%}
+                    });  
+                </script> 
+                #}               
+        {% endblock %}
+
+                </body>
+            </html>

@@ -1,0 +1,26 @@
+{#utilisé pour la génération du treeview#}
+
+{# ENTITE #}
+{% for entite in entites %}
+    <ul>
+        <li id="{{"entite-"~entite.id}}">            
+            <a href="{{path('select_entite',{'entite_id':entite.id})}}">{{entite.libelle}}</a>            
+            {# SYMPTOME (=PROBLEME DE BASE) #}
+            {% for probleme in entite.problemes %}
+                <ul>
+                    <li  id="{{"probleme-"~probleme.id}}">                        
+                        <a href="{{path('select_entite_pb',{'entite_id': entite.id, 'symptome_id': probleme.id})}}">{{probleme.libelle}}</a>                              
+                        {#Affiche tous les problèmes amonts du problème de base#}
+                        {%set problemes=probleme.problemesamont%}                       {# la variable problemes représente la liste de tous les problèmes amonts au symptome demandé #}
+                        {% set level=0 %}                                               {# initialisation du niveau d'arborescence parcourue#}
+                        {% set ids={'entite_id':entite.id, 'symptome_id':probleme.id} %}{# mémorisation des id parents (entité et symptome demandé #}
+                        {% set problems_chaining=[] %}                                  {# initialisation de la chaine des problèmes possibles #}
+                        {#
+                        {%include('solversolverBundle:blocs:treeview_listeProblemesParProbleme.html.twig')%}
+                        #}
+                    </li>
+                </ul>
+            {% endfor %}
+        </li>
+    </ul>
+{% endfor %}

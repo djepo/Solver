@@ -1,0 +1,37 @@
+<h1>entites list</h1>
+
+<table class="records_list">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Libelle</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+        <tr>
+            <td><a href="{{ path('entites_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+            <td>{{ entity.libelle }}</td>
+            <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('entites_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('entites_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<ul>
+    <li>
+        <a href="{{ path('entites_new') }}">
+            Create a new entry
+        </a>
+    </li>
+</ul>

@@ -1,0 +1,49 @@
+<ul class="chart">
+    {% if problemes|length>0 %}
+        {% set level=problems_chaining|length+1 %}
+        
+        {% for probleme in problemes %}        
+            {%set mémo=problems_chaining %} {# Mémorisation de l'enchainement, pour réinjection ultérieure#}
+            {% set problems_chaining=problems_chaining|merge([probleme.problemeamont.id]) %}    {# mémorisation du problème actuellement parcouru (ajout a la chaine déjà existante) #}
+
+            {# Calcul de la chaine d'enchainement de problèmes, à passer en paramètre de lien #}
+            {% set enchainement=null %}
+            {%if level>1 %}
+                {% for i in 0..level-2 %}
+                    {% set enchainement=enchainement~problems_chaining[i]~"&" %}
+                {% endfor %}
+            {%endif%}
+            {% set enchainement=enchainement~problems_chaining[level-1] %}
+            {# Fin calcul #}
+            
+            {% if probleme.comptageUtilisationAmontTotal!=0 %}
+                {% set pourcentage= probleme.comptageutilisationamont/probleme.comptageUtilisationAmontTotal*100%}
+            {%else%}
+                {% set pourcentage=0 %}
+            {%endif%}
+        
+            {% set NbrePbAmont=0%}
+            {% set NbrePbAmont=probleme.problemeamont.problemesamont|length%}
+        
+            <li class="ajax_pb_amont">
+                <img class="accordeon_ajax_work" src="{{asset('bundles/solvermain/images/indicator_snake.gif')}}"></img>
+                <div title="{{probleme.problemeamont.libelle}}" class="graph">
+                    <span class="bar" style="width: {{pourcentage}}%"></span>
+                </div>
+                
+                <a class="bar_title" title="{{probleme.problemeamont.libelle}}" href="{{path('select_entite_pb',{'entite_id': ids.entite_id, 'symptome_id': ids.symptome_id, chain: enchainement})}}" link_solution="{{path('ajax_probleme_solution_show',{'probleme_id': probleme.problemeamont.id})}}">
+                    {{probleme.problemeamont.libelle}}                
+                    
+                    <span class="Indicateur_Nb_Pb_Amont">
+                        {% if NbrePbAmont>0%}{% for affichagePoints in 1..NbrePbAmont %}.{%endfor%}{%endif%}
+                    </span>                    
+                </a>
+            </li>            
+        
+        {% set problems_chaining=mémo %}    {# Une fois tous les sous problèmes explorés, on réinjecte l'enchainement mémorisé avant l'exploration en profondeur #}
+            
+        {% endfor %}
+    {%else%}
+            <li>Aucun problème amont n'a été trouvé.</li>
+    {%endif%}
+</ul>

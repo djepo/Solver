@@ -1,0 +1,36 @@
+<img class="solution_ajax_work" src="{{asset('bundles/solvermain/images/indicator_snake.gif')}}"></img>
+{%if solution is defined %}
+    {%if solution.probleme is defined %}
+        <div id="conteneur_solution"  style="overflow:auto; padding:10px;margin-top: 10px;  " class="ui-widget-content">
+            <div id="solution">            
+                <h3><a href="#">Solution au problème: {{solution.probleme.libelle}}</a></h3>
+                <div>{{solution.libelle}}</div>                            
+            </div>
+        </div>
+    {%else%}
+        <div id="conteneur_solution"  style="overflow:auto; padding:10px;margin-top: 10px;  " class="ui-widget-content">
+            <div id="solution">            
+                <h3><a href="#">Pas de solution</a></h3>
+                <div></div>
+            </div>
+        </div> 
+    {%endif%}   
+{%endif%}
+
+<script>
+    //initialisation de l'accordéon des solutions        
+    $('#solution').accordion({
+        fillSpace:  false,
+        autoHeight: false,
+        collapsible:true,
+        {%if solution is defined %}
+            {%if solution.probleme is defined %}
+                active: 'h3:last',
+            {%else%}
+                active: 'none',
+            {%endif%}
+        {%else%}
+            active: 'none',
+        {%endif%}
+    });
+</script>

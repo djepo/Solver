@@ -1,0 +1,28 @@
+{% extends "solvermainBundle:Admin:layout.html.twig" %}
+
+{% block included_js %}
+    {{parent()}}
+    <script src="{{ asset('bundles/solvermain/js/jquery/jquery.form.js') }}"></script>
+{%endblock%}
+
+{%block admin_content %}
+    <div id="tabs">
+        <ul>
+            <li><a href="{{ url('admin_ajax_entites') }}">Entités</a></li>
+        </ul>
+    </div>
+{%endblock%} 
+
+{% block javascripts %}
+    <script>
+        $(function() {
+            $('#tabs').tabs({
+                ajaxOptions: {
+                    error: function( xhr, status, index, anchor ) {
+                                $( anchor.hash ).html("Erreur de chargement de cet onglet.");
+                            }
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -11,11 +11,17 @@ class entitesType extends AbstractType
     {
         $builder
             ->add('libelle')
+            ->add('existe')            
         ;
     }
 
     public function getName()
     {
         return 'solver_solverbundle_entitestype';
+    }
+    
+    public function getDefaultOptions(array $options)
+    {
+        return array('data_class' => 'solver\solverBundle\Entity\entites',);
     }
 }

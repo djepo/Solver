@@ -10,8 +10,8 @@ class entitesType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         $builder
-            ->add('libelle')
-            ->add('existe')            
+            ->add('libelle','text')
+            ->add('existe','checkbox',array('required'=>false))            
         ;
     }
 

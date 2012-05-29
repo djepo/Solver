@@ -3,12 +3,16 @@
 {% block included_js %}
     {{parent()}}
     <script src="{{ asset('bundles/solvermain/js/jquery/jquery.form.js') }}"></script>
+    <script src="{{ asset('bundles/solvermain/js/jquery/jquery.hotkeys.js') }}"></script>
 {%endblock%}
 
 {%block admin_content %}
-    <div id="tabs">
+    <div id="tabs" style="min-height: 600px;">
         <ul>
             <li><a href="{{ url('admin_ajax_entites') }}">Entités</a></li>
+            <li><a href="{{ url('admin_ajax_problemes') }}">Problèmes</a></li>
+            <li><a href="{{ url('admin_ajax_solutions') }}">Solutions</a></li>
+            <li><a href="{{ url('admin_ajax_liaisons') }}">Liaisons</a></li>
         </ul>
     </div>
 {%endblock%} 
@@ -19,10 +23,11 @@
             $('#tabs').tabs({
                 ajaxOptions: {
                     error: function( xhr, status, index, anchor ) {
-                                $( anchor.hash ).html("Erreur de chargement de cet onglet.");
+                                //$( anchor.hash ).html("Erreur de chargement de cet onglet.");
                             }
-                }
+                },
+                cookie: {}
             });
-        });
+        });        
     </script>
 {% endblock %}

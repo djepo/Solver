@@ -40,7 +40,11 @@ class solutions
      */
     private $probleme;
     
-
+    public function __construct()
+    {
+        $this->existe=true;
+    }
+    
     /**
      * Get id
      *

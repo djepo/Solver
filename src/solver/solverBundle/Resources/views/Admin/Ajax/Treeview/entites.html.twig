@@ -1,0 +1,5 @@
+{%for entite in entites %}
+    <li {%if entite.problemes|length>0%}class="jstree-closed"{%endif%} id='e{{entite.id}}'>
+        <a href="#">{{entite.libelle}}</a>        
+    </li>
+{%endfor%}

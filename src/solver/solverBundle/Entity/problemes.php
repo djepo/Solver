@@ -29,10 +29,9 @@ class problemes
     private $libelle;
 
     /**
-     *
-     * @var int $entite;
+     *     
      * @ORM\ManyToOne(targetEntity="entites", inversedBy="problemes")
-     * @ORM\JoinColumn(name="entite_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="entite_id", referencedColumnName="id", nullable="true")
      */
     private $entite;
     
@@ -129,26 +128,6 @@ class problemes
     }
 
     /**
-     * Set entite
-     *
-     * @param solver\solverBundle\Entity\entites $entite
-     */
-    public function setEntite(\solver\solverBundle\Entity\entites $entite)
-    {
-        $this->entite = $entite;
-    }
-
-    /**
-     * Get entite
-     *
-     * @return solver\solverBundle\Entity\entites 
-     */
-    public function getEntite()
-    {
-        return $this->entite;
-    }
-
-    /**
      * Add problemesamont
      *
      * @param solver\solverBundle\Entity\probleme_probleme $problemesamont
@@ -237,4 +216,24 @@ class problemes
     
         $this->existe=true;
     }    
+
+    /**
+     * Set entite
+     *
+     * @param solver\solverBundle\Entity\entites $entite
+     */
+    public function setEntite(\solver\solverBundle\Entity\entites $entite=null)
+    {
+        $this->entite = $entite;
+    }
+
+    /**
+     * Get entite
+     *
+     * @return solver\solverBundle\Entity\entites 
+     */
+    public function getEntite()
+    {
+        return $this->entite;
+    }
 }

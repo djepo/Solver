@@ -1,16 +1,16 @@
-<h2>Liste des entités</h2>
+<h2>Liste des solutions</h2>
 
-{% if entites is defined %}
+{% if solutions is defined %}
     <table>
         <tr>            
             <th style="width:70px;float:left;">Existe ?</th>
             <th style="width:200px;float:left;">Libellé</th>
         <tr>
-    {% if entites|length>0 %}        
-            {% for entite in entites %}
+    {% if solutions|length>0 %}        
+            {% for solution in solutions %}
                 <tr>                    
                     <td colspan="2">
-                        <form id="form_entite_{{loop.index0}}" action="{{ path('admin_ajax_entite_update', { 'id': entite.id }) }}" method="post" {{ form_enctype(forms[loop.index0]) }}>                            
+                        <form id="form_solution_{{loop.index0}}" action="{{ path('admin_ajax_solution_update', { 'id': solution.id }) }}" method="post" {{ form_enctype(forms[loop.index0]) }}>                            
                             {{form_errors(forms[loop.index0])}}
                             
                             <div style="width:70px; float:left">
@@ -31,16 +31,16 @@
                 </tr>
             {%endfor%} 
     {%else%}
-        Aucune entité à afficher.
+        Aucune solution à afficher.
     {%endif%}
     </table>
 
     <hr>
-    <h2>Création d'une nouvelle entité</h2>
-    <form id="form_nouvelle_entite" action="{{path('admin_entite_create')}}" method="post" {{ form_enctype(form_nouvelle_entite) }}>
-        {{ form_widget(form_nouvelle_entite) }}        
+    <h2>Création d'une nouvelle solution</h2>
+    <form id="form_nouvelle_solution" action="{{path('admin_solution_create')}}" method="post" {{ form_enctype(form_nouvelle_solution) }}>
+        {{ form_widget(form_nouvelle_solution) }}        
             
-        <button id="bouton_ajout_entite" type=submit>Ok</button>
+        <button id="bouton_ajout_solution" type=submit>Ok</button>
     </form>
 
 
@@ -55,8 +55,8 @@
         }; 
  
         // bind to the form's submit event 
-        {% for entite in entites %}
-            $('#form_entite_{{loop.index0}}').submit(function() {                
+        {% for solution in solutions %}
+            $('#form_solution_{{loop.index0}}').submit(function() {                
                 $(this).ajaxSubmit(options);
                 return false; 
             }); 
@@ -81,5 +81,5 @@
     </script>
 
 {%else%}
-    Erreur dans le contrôleur. Le champ Entites n'a pas été envoyé.
+    Erreur dans le contrôleur. Le champ Solutions n'a pas été envoyé.
 {%endif%}

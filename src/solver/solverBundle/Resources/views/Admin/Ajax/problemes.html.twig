@@ -1,0 +1,90 @@
+<h2>Liste des problèmes</h2>
+
+{% if problemes is defined %}
+    <table id="onglet_problemes_table">
+        <tr>            
+            <th style="width:70px;float:left;">Existe ?</th>
+            <th style="width:300px;float:left;">Libellé</th>
+            <th style="width:200px;float:left;">Entité liée</th>
+        <tr>
+    {% if problemes|length>0 %}
+        {% for probleme in problemes %}
+            <tr>
+                <td colspan="3">
+                    <form id="form_probleme_{{loop.index0}}" action="{{ path('admin_ajax_probleme_update', { 'id': probleme.id }) }}" method="post" {{ form_enctype(forms[loop.index0]) }}>
+                        {{form_errors(forms[loop.index0])}}
+                            
+                        <div style="width:70px; float:left">
+                            {{form_errors(forms[loop.index0].existe)}}
+                            {{form_widget(forms[loop.index0].existe)}}
+                        </div>
+
+                        <div style="width:300px; float:left">
+                            {{form_errors(forms[loop.index0].libelle)}}
+                            {{form_widget(forms[loop.index0].libelle)}}
+                        </div>
+                            
+                        <div style="width:280px; float:left">
+                            {{form_errors(forms[loop.index0].entite)}}
+                            {{form_widget(forms[loop.index0].entite)}}
+                        </div>
+                                
+                        {{form_rest(forms[loop.index0])}}
+                        <button type="submit">Ok</button>     
+                    </form> 
+                    <img class="ajax_img" src="" style="display: block;position: absolute; margin-left: -20px; margin-top: -22px;"></img>
+                </td>
+            </tr>
+        {% endfor %}
+    {%else%}
+        Aucun problème à afficher.
+    {%endif%}
+    </table>
+
+    <hr>
+    <h2>Création d'un nouveau problème</h2>
+    <form id="form_nouveau_probleme" action="{{path('admin_probleme_create')}}" method="post" {{ form_enctype(form_nouveau_probleme) }}>
+        {{ form_widget(form_nouveau_probleme) }}        
+            
+        <button id="bouton_ajout_probleme" type=submit>Ok</button>
+    </form>
+    
+    
+    
+
+
+
+    <script>
+    {# GESTION DU SUBMIT AJAX DES FORMULAIRES #}
+    $(document).ready(function() { 
+        var options = {            
+            beforeSubmit:  showRequest,  // pre-submit callback 
+            success:       showResponse, // post-submit callback             
+        }; 
+ 
+        // bind to the form's submit event 
+        {% for probleme in problemes %}
+            $('#form_probleme_{{loop.index0}}').submit(function() {                
+                $(this).ajaxSubmit(options);
+                return false; 
+            }); 
+        {%endfor%}
+    });
+    
+    // pre-submit callback 
+    function showRequest(formData, jqForm, options) {        
+        jqForm.next().attr('src','{{asset('bundles/solvermain/images/indicator_snake.gif')}}');
+        jqForm.next().show();
+        return true;
+    }
+        
+    // post-submit callback 
+    function showResponse(responseText, statusText, xhr, $form)  {         
+        $form.next().attr('src','{{asset('bundles/solvermain/images/ajax_success.png')}}');
+        $form.next().fadeOut(3000);        
+    }
+    </script>
+    
+{% else %}
+    Erreur dans le contrôleur, le champ problemes n'a pas été envoyé.
+{% endif %}

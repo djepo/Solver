@@ -5,7 +5,7 @@
 
 <script>
     $(function () {
-	$("#container_treeview").jstree({ 
+	$("#container_treeview").jstree({
             "html_data" : {
                 "ajax" : {
                     "url" : "{{url('admin_ajax_liaisonstreeviewentitesaction')}}",
@@ -16,71 +16,128 @@
                                                 }
                                                 else {
                                                     return "";
-                                                }                                                
+                                                }
                                              },
                     }
             },
-            "plugins" : [ "themes", "ui", "html_data", "hotkeys","crrm", "contextmenu" ],
+            "plugins" : [ "themes", "ui", "html_data", "hotkeys","crrm", "contextmenu", "types" ],
             "core": {'animation':100},
-            "contextmenu": {"select_node": true,
-                            "show_at_node":false,
+            "contextmenu": {"select_node":  true,
+                            "show_at_node": false,
+                            "items":        MenuPerso,
                            },
-            "themes": {"theme": "default",
-            
-                      },
-	});        
+            "themes":   {"theme": "default"},
+            "types":    {
+                            "valid_children":    ["root"],
+                            "types":    {
+                                            "root":     {
+                                                            "delete_node":  false,
+                                                            "rename_node":  false,
+                                                        },
+                                            "entité":   {
+
+                                                        },
+                                            "problème": {
+
+                                                        },
+                                            "solution": {
+
+                                                        },
+                                        },
+                        },
+	});
     });
+
+    //définition du menu pour le treeview
+    //principe: on crée tout le menu, et on désactive ce qui ne sers pas, selon le type de noeud
+    function MenuPerso(node) 
+    {
+        // The default set of all items
+        var items = {
+                        createItem: {
+                                        label: "Nouveau problème",
+                                        action: function (obj) {this.create(obj);},
+                                        separator_after:    true,
+                                    },
+                        renameItem: { // The "rename" menu item
+                                        label: "Renommer",
+                                        action: function (obj) {this.rename(obj);},
+                                    },
+                        deleteItem: { // The "delete" menu item
+                                        label: "Effacer",
+                                        action: function (obj) {this.delete(obj)},
+                                        separator_after:    true,
+                                    }
+                    };
+
+        if ($(node).attr("rel")=="root")
+        {
+            // Delete the "delete" menu item
+            //delete items.deleteItem;
+            items.createItem.label="Nouvelle Entité";
+            items.deleteItem._disabled=true;
+            items.renameItem._disabled=true;            
+        }
+
+        return items;   
+    }
     
+    //redirection du renommage par défaut dans la fonction rename
     $(function() {
         $("#container_treeview").bind('rename.jstree', function(e, data){
             rename (e,data);
         });
     });
-    
-    //$(function(){
-    //    $("#container_treeview").jstree.click(function(){
-    //            alert("clic");
-    //        });
-    //});
-    
+
     function rename(e, data)
     {
-     if(data.rslt.new_name!=data.rslt.old_name)
-     {
-         //alert('on renomme');
-         //alert(data.args[0].attr("id"));
-         var id=data.args[0].attr("id");
-         var libelle=data.rslt.new_name;
-         $.ajax({   async:false,
-                    type: 'POST',
-                    url: '{{url('admin_ajax_liaisonstreeview_RenameThing')}}',
-                    data: { 'id': id,
-                            'libelle': libelle,
-                          },
-                    success: function(data, textStatus, jqXHR) 
-                             {
-                                 //rafraichissement de tous les noeuds ayant le même id
-                                 $("#container_treeview li").each(function(){
-                                     id2=$(this).attr("id");
-                                     if(id2==id)
-                                        {
-                                            valins=$(this).children("a").chidren("ins");
-                                            $(this).children("a").html(valins+libelle);
-                                        }
-                                     });
-                        
-                             },                        
-                    error:  function (jqXHR, textStatus, errorThrown)
+        //mémorisation de l'icone du noeud, et démararge de l'indicateur ajax
+        
+        nodeImg=data.args[0].children("a");
+        $(nodeImg).attr("class","jstree-loading");        
+        
+        if (data.args[0].attr("id")!="root")
+        {
+            if(data.rslt.new_name!=data.rslt.old_name)
+            {
+                //alert('on renomme');
+                var id=data.args[0].attr("id");
+                var libelle=data.rslt.new_name;
+                $.ajax({async:false,
+                        type: 'POST',
+                        url: '{{url('admin_ajax_liaisonstreeview_RenameThing')}}',
+                        data: { 'id': id,
+                                'libelle': libelle,
+                              },
+                        success: function(data, textStatus, jqXHR)
                             {
-                             $.jstree.rollback(data.rlbk);  
-                            }             
-             });
-     }
-     else
-     {
-      //alert('on ne renomme pas');
-      $.jstree.rollback(data.rlbk);
-     };
+                                //rafraichissement de tous les noeuds ayant le même id
+                                $("#container_treeview li").each(function(){
+                                    id2=$(this).attr("id");
+                                    if(id2==id)
+                                    {
+                                        //valins=$(this).children("a").children("ins");
+                                        valins=$(this).children("a > ins").text();
+                                        //alert($(valins).html());
+                                        $(this).children("a").html('<ins class="jstree-icon">&nbsp;</ins>'+libelle);
+                                        
+                                    }
+                                });                                
+                            },
+                        error:  function (jqXHR, textStatus, errorThrown)
+                            {
+                                $.jstree.rollback(data.rlbk);
+                            }
+                });
+            }
+            else
+            {
+                //alert('on ne renomme pas');
+                $.jstree.rollback(data.rlbk);
+            };
+        }
+        
+        $(nodeImg).attr("class","jstree-clicked");
     }
 
 </script>

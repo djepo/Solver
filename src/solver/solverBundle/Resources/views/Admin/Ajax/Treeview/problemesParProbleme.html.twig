@@ -1,5 +1,5 @@
 {%for probleme in problemes %}
-    <li {%if probleme.problemeamont.problemesamont|length>0%}class="jstree-closed"{%endif%} id='p{{probleme.problemeamont.id}}'>
+    <li {%if probleme.problemeamont.problemesamont|length>0%}class="jstree-closed"{%endif%} id='p{{probleme.problemeamont.id}}' rel="probleme">
         <a href="#">{{probleme.problemeamont.libelle}}</a>        
     </li>
 {%endfor%}

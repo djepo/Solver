@@ -319,9 +319,9 @@ class AdminController extends Controller
     }
 
      /**
-     * @Route("/Ajax/Liaisons/Treeview/RenameThing", name="admin_ajax_liaisonstreeview_RenameThing")
+     * @Route("/Ajax/Liaisons/Treeview/Rename", name="admin_ajax_liaisonstreeview_Rename")
      */
-    public function admin_ajax_liaisonsTreeviewRenameThingAction()
+    public function admin_ajax_liaisonsTreeviewRenameAction()
     {
         $request = $this->getRequest();
         $param_id=$request->request->get('id');  
@@ -386,4 +386,106 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * @route("/Ajax/Liaisons/Treeview/Create", name="admin_ajax_liaisonstreeview_create")
+     */
+    public function admin_ajax_liaisonsTreeviewCreateAction()
+    {
+        $request = $this->getRequest();
+        $parent_id=$request->request->get('parent_id');  
+        $libelle=$request->get('libelle');
+        
+        if (!$parent_id || !$libelle)
+        {
+            throw new \Exception('Erreur de passage de paramètres');
+        }
+        
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        
+        if ($parent_id=="root")
+        {
+            //si le parent est la racine, on va ajouter une entité
+            $entite=new \solver\solverBundle\Entity\entites();
+            $entite->setLibelle($libelle);
+            $validator = $this->get('validator');
+            $errors = $validator->validate($entite);
+            if (count($errors)==0)
+            {
+               $em->persist($entite);
+               $em->flush();
+               
+               $response=new Response(json_encode(array("type"=>"entite",
+                                                        "id"=>$entite->getId(),
+                                                        "libelle"=>$entite->getLibelle(),
+                                                        "existe"=>$entite->getExiste()
+                                                       )
+                                                 )
+                                     );
+               $response->headers->set('Content-Type', 'application/json');
+               return $response;
+            }
+            else
+            {
+              //throw new \Exception('Erreur de validation');
+                $response=new Response(json_encode(array("type"=>"error",
+                                                         "libelle"=>$errors)));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;                
+                //return new Response(print_r($errors, true));
+            }
+        }
+        else
+        {
+            //si le parent n'est pas la racine, on va ajouter un problème, il  a cependant 2 types de problèmes, un problème lié à une entité, ou un problème lié à un autre problème
+            //cela dépends du type de racine parent, si c'est une entité (e) ou un problème (p)
+            if(substr($parent_id,0,1)=="e") {
+                //le noeud parent est une entité
+                $probleme=new \solver\solverBundle\Entity\problemes();
+                $entite_id=substr($parent_id,1,strlen($parent_id)-1);
+                $entite=$em->getRepository('solversolverBundle:entites')->find($entite_id);
+                if (!$entite){
+                    throw $this->createNotFoundException('Erreur: entité introuvable.');
+                }
+                
+                $probleme->setLibelle($libelle);
+                $probleme->setEntite($entite);
+                $validator = $this->get('validator');
+            
+                $errors = $validator->validate($probleme);
+                if (count($errors)==0)
+                {   
+                    $em->persist($probleme);
+                    $em->flush();
+               
+                    $response=new Response(json_encode(array("type"=>"probleme",
+                                                             "id"=>$probleme->getId(),
+                                                             "libelle"=>$probleme->getLibelle(),
+                                                             "existe"=>$probleme->getExiste()
+                                                            )
+                                                     )
+                                        );
+                    $response->headers->set('Content-Type', 'application/json');
+                    return $response;
+                }
+                else {              
+                    $response=new Response(json_encode(array("type"=>"error",
+                                                             "libelle"=>$errors)));
+                    $response->headers->set('Content-Type', 'application/json');
+                    return $response;                                
+                }
+            }
+            elseif (substr($parent_id,0,1)=="p") {
+                //le noeud parent est un problème
+                
+            }
+            else {
+                $response=new Response(json_encode(array("type"=>"error",
+                                                         "libelle"=>"Type du noeud parent non géré par le contrôleur. Id du parent=".$parent_id)));
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;  
+            }
+        }
+        
+    }
 }

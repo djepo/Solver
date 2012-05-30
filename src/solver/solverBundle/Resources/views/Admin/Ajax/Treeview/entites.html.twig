@@ -2,7 +2,7 @@
     <a href="#">/</a>
     <ul>    
         {%for entite in entites %}
-            <li {%if entite.problemes|length>0%}class="jstree-closed"{%endif%} id='e{{entite.id}}' rel="entité">
+            <li {%if entite.problemes|length>0%}class="jstree-closed"{%endif%} id='e{{entite.id}}' rel="entite">
                 <a href="#">{{entite.libelle}}</a>        
             </li>
         {%endfor%}

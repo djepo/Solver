@@ -34,10 +34,10 @@
                                                             "delete_node":  false,
                                                             "rename_node":  false,
                                                         },
-                                            "entité":   {
+                                            "entite":   {
 
                                                         },
-                                            "problème": {
+                                            "probleme": {
 
                                                         },
                                             "solution": {
@@ -88,11 +88,17 @@
             rename (e,data);
         });
     });
+    //redirection de la création par défaut dans la fonction create
+    $(function() {
+        $("#container_treeview").bind("create.jstree", function(e,data) {
+            create (e, data);
+        });
+    });
+    
 
     function rename(e, data)
     {
-        //mémorisation de l'icone du noeud, et démararge de l'indicateur ajax
-        
+        //mémorisation de l'icone du noeud, et démararge de l'indicateur ajax        
         nodeImg=data.args[0].children("a");
         $(nodeImg).attr("class","jstree-loading");        
         
@@ -105,7 +111,7 @@
                 var libelle=data.rslt.new_name;
                 $.ajax({async:false,
                         type: 'POST',
-                        url: '{{url('admin_ajax_liaisonstreeview_RenameThing')}}',
+                        url: '{{url('admin_ajax_liaisonstreeview_Rename')}}',
                         data: { 'id': id,
                                 'libelle': libelle,
                               },
@@ -137,7 +143,83 @@
             };
         }
         
-        $(nodeImg).attr("class","jstree-clicked");
+        $(nodeImg).attr("class","jstree-clicked");  //on enleve l'indicateur ajax pour remettre l'icone par défaut
+    }
+    
+    function create (e, data)
+    {
+        //nodeImg=data.args[0].children("a");
+        //$(nodeImg).attr("class","jstree-loading");
+        
+        //alert ('creation');
+        //var parent_id=data.args[0].attr("id");
+        var parent_id=data.rslt.parent[0].id;
+        var libelle=data.rslt.name;        
+        var node = data.rslt.obj;
+
+        node.children("a").attr("class","jstree-loading");
+        
+        $.ajax({
+                async: false,
+                type:"POST",
+                url: '{{url('admin_ajax_liaisonstreeview_create')}}',
+                data:   {   'parent_id':    parent_id,
+                            'libelle':      libelle,
+                        },
+                success: function(json_data, textStatus, jqXHR)
+                         {
+                             var prefixe_id=null;
+                             
+                             switch(json_data.type)
+                             {
+                                 case "entite":
+                                    prefixe_id="e";
+                                    break;
+                                 case "probleme":
+                                     prefixe_id="p";
+                                     break;
+                                 case "solution":
+                                     prefixe_id="s";
+                                     break;
+                                 case "error":  //le contrôleur renvoie une erreur, on va afficher le libelle
+                                     alert (json_data.libelle);
+                                     $.jstree.rollback(data.rlbk);
+                                    break;
+                                 default:
+                                     alert ('Erreur: Type retourné inconnu.')
+                                     $.jstree.rollback(data.rlbk);
+                                     break;
+                             }
+                             
+                             if (prefixe_id!=null) {
+                                node.attr("id",prefixe_id+json_data.id);   //insertion de l'id du noeud en fonction de son préfixe et de l'id renvoyée
+                                switch(prefixe_id)
+                                {
+                                 case "e":
+                                     node.attr("rel","entite");
+                                     break;
+                                 case "p":
+                                     node.attr("rel","probleme");
+                                     break;
+                                 case "s":
+                                     node.attr("rel","solution");
+                                     break;
+                                 default:
+                                     break;
+                                }                                
+                             }
+                                                          
+                         },
+                error:   function (jqXHR, textStatus, errorThrown)
+                         {
+                            alert ('error');
+                            $.jstree.rollback(data.rlbk);
+                         },
+        });
+        
+        //$(nodeImg).attr("class","jstree-clicked");  //on enleve l'indicateur ajax pour remettre l'icone par défaut
+        node.children("a").attr("class","jstree-clicked");
+        
     }
 
 </script>

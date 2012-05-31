@@ -7,7 +7,7 @@
 {%endif%}
     
 {%for probleme in problemes %}
-    <li {%if probleme.problemeamont.problemesamont|length>0%}class="jstree-closed"{%endif%} id='p{{probleme.problemeamont.id}}' rel="probleme" title="Problème">
+    <li {%if probleme.problemeamont.problemesamont|length>0 or probleme.problemeamont.solutions|length>0%}class="jstree-closed"{%endif%} id='p{{probleme.problemeamont.id}}' rel="probleme" title="Problème">
         <a href="#">{{probleme.problemeamont.libelle}}</a>        
     </li>
 {%endfor%}

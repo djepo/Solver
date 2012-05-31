@@ -269,7 +269,7 @@ class AdminController extends Controller {
      *
      * @Route("/Ajax/Liaisons/Treeview/Load", name="admin_ajax_liaisonsTreeviewLoad")
      */
-    public function admin_ajax_liaisonsTreeviewEntitesAction() {
+    public function admin_ajax_liaisonsTreeviewLoadAction() {
         $request = $this->getRequest();
         $params = $request->query->get('id');
         $em = $this->getDoctrine()->getEntityManager();
@@ -288,7 +288,7 @@ class AdminController extends Controller {
                 $probleme_id = substr($chain[$level], 1, strlen($chain[$level]) - 1);
                 $problemes = $em->getRepository('solversolverBundle:probleme_probleme')->findBy(array('probleme_aval' => $probleme_id), array());
                 $solutions = $em->getRepository("solversolverBundle:solutions")->findBy(array("probleme" => $probleme_id), array("priorite"=>"ASC", "titre"=>"ASC"));
-
+                
                 return $this->render('solversolverBundle:Admin/Ajax/Treeview:problemesParProbleme.html.twig', array('problemes' => $problemes,
                                                                                                                     'solutions' => $solutions,
                                                                                                                     )

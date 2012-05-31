@@ -107,9 +107,10 @@ class DefaultController extends Controller
         if ($request->isXmlHttpRequest()){
             $em = $this->getDoctrine()->getEntityManager();
             $probleme = $em->getRepository('solversolverBundle:problemes')->find($probleme_id);
-            $solution=$probleme->getSolution();
+            $solutions=$probleme->getSolutions();
+            //var_dump($solutions);
             
-            return $this->container->get('templating')->renderResponse('solversolverBundle:blocs:ajax_solution.html.twig', array('solution' => $solution));
+            return $this->container->get('templating')->renderResponse('solversolverBundle:blocs:ajax_solution.html.twig', array('solutions' => $solutions));
             
         }
         else {

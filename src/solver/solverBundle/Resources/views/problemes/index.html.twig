@@ -48,16 +48,16 @@
 
     {# CALCUL DE LA SOLUTION SELON QUE L'ON EST SUR UN SYMPTOME OU UN PROBLEME #}
     {%if problème_sélectionné|length>0 %}
-        {% if problème_sélectionné.solution is defined %}
-            {% if problème_sélectionné.solution|length!=0 %}
-                {%set solution=problème_sélectionné.solution %}
+        {% if problème_sélectionné.solutions is defined %}
+            {% if problème_sélectionné.solutions|length!=0 %}
+                {%set solutions=problème_sélectionné.solutions %}
             {%endif%}
         {%endif%}
     {%else%}
         {% if symptome is defined %}
-            {% if symptome.solution is defined %}
-                {% if symptome.solution|length!=0 %}
-                    {%set solution=symptome.solution %}
+            {% if symptome.solutions is defined %}
+                {% if symptome.solutions|length!=0 %}
+                    {%set solutions=symptome.solutions %}
                 {%endif%}
             {%endif%}
         {%endif%}
@@ -70,9 +70,14 @@
         <img class="solution_ajax_work" src="{{asset('bundles/solvermain/images/indicator_snake.gif')}}"></img>
         <div id="conteneur_solution"  style="overflow:auto; padding:10px;margin-top: 10px;  " class="ui-widget-content">        
             <div id="solution">
-                {%if solution is defined %}
-                    <h3><a href="#">Solution au problème: {{solution.probleme.libelle}}</a></h3>
-                    <div>{{solution.libelle}}</div>
+                {%if solutions is defined %}
+                    {% for solution in solutions %}
+                        <h3><a href="#">Solution au problème: {{solution.probleme.libelle}}</a></h3>
+                        <div>
+                            <h3>{{solution.titre}}</h3>
+                            {{solution.libelle}}
+                        </div>
+                    {%endfor%}
                 {%else%}
                     <h3><a href="#">Aucune solution à proposer</a></h3>
                     <div></div>

@@ -1,4 +1,4 @@
-{%for probleme in problemes %}
+{%for probleme in problemes %}    
     <li {%if probleme.problemesamont|length>0 or probleme.solutions|length>0%}class="jstree-closed"{%endif%} id='p{{probleme.id}}' rel="probleme" title="Problème">
         <a href="#">{{probleme.libelle}}</a>        
     </li>

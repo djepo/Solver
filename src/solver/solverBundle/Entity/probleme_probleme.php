@@ -51,9 +51,11 @@ class probleme_probleme
     private $existe;    
 
     
-    public function _construct()
+    public function __construct()
     {
         //une association existe par défaut, lors de sa création
+        $this->comptageUtilisationAmont=0;
+        $this->comptageUtilisationAmontTotal=0;
         $this->existe=true;
     }
     

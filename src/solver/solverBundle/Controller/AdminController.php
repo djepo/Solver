@@ -477,7 +477,49 @@ class AdminController extends Controller
             }
             elseif (substr($parent_id,0,1)=="p") {
                 //le noeud parent est un problème
+                //il faut donc ajouter le problème, puis sa liaison dans la table probleme_probleme avec le problème parent
+                $probleme=new \solver\solverBundle\Entity\problemes();
+                $probleme_parent_id=substr($parent_id,1,strlen($parent_id)-1);
+                $probleme_parent=$em->getRepository('solversolverBundle:problemes')->find($probleme_parent_id);
+                if (!$probleme_parent){
+                    throw $this->createNotFoundException('Erreur: problème parent introuvable.');
+                }
+                $liaison_problemes=new \solver\solverBundle\Entity\probleme_probleme();
                 
+                $probleme->setLibelle($libelle);
+                $liaison_problemes->setProblemeAval($probleme_parent);
+                $liaison_problemes->setProblemeAmont($probleme);
+                //$liaison_problemes->setComptageUtilisationAmont(0);
+                //$liaison_problemes->setComptageUtilisationAmontTotal(0);
+                //$liaison_problemes->setExiste(true);
+                
+                $validator = $this->get('validator');
+            
+                $errors = $validator->validate($probleme);
+                if (count($errors)==0)
+                {   
+                    $em->persist($probleme);
+                    $em->flush();
+                    //$em->persist($probleme_parent);
+                    $em->persist($liaison_problemes);
+                    $em->flush();
+               
+                    $response=new Response(json_encode(array("type"=>"probleme",
+                                                             "id"=>$probleme->getId(),
+                                                             "libelle"=>$probleme->getLibelle(),
+                                                             "existe"=>$probleme->getExiste()
+                                                            )
+                                                     )
+                                        );
+                    $response->headers->set('Content-Type', 'application/json');
+                    return $response;
+                }
+                else {              
+                    $response=new Response(json_encode(array("type"=>"error",
+                                                             "libelle"=>$errors)));
+                    $response->headers->set('Content-Type', 'application/json');
+                    return $response;                                
+                }
             }
             else {
                 $response=new Response(json_encode(array("type"=>"error",

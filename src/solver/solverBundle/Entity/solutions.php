@@ -12,19 +12,24 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class solutions
 {
-    /**
-     * @var integer $id
+    /**     
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+    
+    /**
+     *   @ORM\Column("name=titre", type="string")
+     *   
+     */
+    private $titre;
 
     /**
      * @var text $libelle
      *
-     * @ORM\Column(name="libelle", type="text")
+     * @ORM\Column(name="libelle", type="text", nullable=true)
      */
     private $libelle;
 
@@ -36,9 +41,15 @@ class solutions
     private $existe;
     
     /**
-     * @ORM\OneToOne(targetEntity="problemes")     
+     * @ORM\ManyToOne(targetEntity="problemes")     
      */
     private $probleme;
+    
+    /**
+     * Priorité d'affichage des solutions par rapport aux autres, dans un problème donné
+     * @ORM\Column(name="priorite", type="integer", nullable=true)
+     */
+    private $priorite;
     
     public function __construct()
     {
@@ -60,7 +71,7 @@ class solutions
      *
      * @param text $libelle
      */
-    public function setLibelle($libelle)
+    public function setLibelle($libelle=null)
     {
         $this->libelle = $libelle;
     }
@@ -72,7 +83,7 @@ class solutions
      */
     public function getLibelle()
     {
-        return $this->libelle;
+        return $this->libelle;        
     }
 
     /**
@@ -96,6 +107,26 @@ class solutions
     }
 
     /**
+     * Set titre
+     *
+     * @param string $titre
+     */
+    public function setTitre($titre)
+    {
+        $this->titre = $titre;
+    }
+
+    /**
+     * Get titre
+     *
+     * @return string 
+     */
+    public function getTitre()
+    {
+        return $this->titre;
+    }
+
+    /**
      * Set probleme
      *
      * @param solver\solverBundle\Entity\problemes $probleme
@@ -113,5 +144,25 @@ class solutions
     public function getProbleme()
     {
         return $this->probleme;
+    }
+
+    /**
+     * Set priorite
+     *
+     * @param integer $priorite
+     */
+    public function setPriorite($priorite=null)
+    {
+        $this->priorite = $priorite;
+    }
+
+    /**
+     * Get priorite
+     *
+     * @return integer 
+     */
+    public function getPriorite()
+    {
+        return $this->priorite;
     }
 }

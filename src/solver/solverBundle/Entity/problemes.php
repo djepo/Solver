@@ -66,9 +66,9 @@ class problemes
     private $solving_log_probleme_amont;
     
     /**
-     * @ORM\OneToOne(targetEntity="solutions", mappedBy="probleme")     
+     * @ORM\OneToMany(targetEntity="solutions", mappedBy="probleme")     
      */
-    private $solution;
+    private $solutions;
     
 
     
@@ -186,37 +186,7 @@ class problemes
     {
         return $this->solving_log_probleme_amont;
     }
-
-    /**
-     * Set solution
-     *
-     * @param solver\solverBundle\Entity\solutions $solution
-     */
-    public function setSolution(\solver\solverBundle\Entity\solutions $solution)
-    {
-        $this->solution = $solution;
-    }
-
-    /**
-     * Get solution
-     *
-     * @return solver\solverBundle\Entity\solutions 
-     */
-    public function getSolution()
-    {
-        return $this->solution;
-    }
     
-    public function __construct()
-    {
-        $this->problemesamont = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->problemesaval = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->solving_log_probleme_aval = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->solving_log_probleme_amont = new \Doctrine\Common\Collections\ArrayCollection();
-    
-        $this->existe=true;
-    }    
-
     /**
      * Set entite
      *
@@ -235,5 +205,35 @@ class problemes
     public function getEntite()
     {
         return $this->entite;
+    }
+    public function __construct()
+    {
+        $this->problemesamont = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->problemesaval = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->solving_log_probleme_aval = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->solving_log_probleme_amont = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->solutions = new \Doctrine\Common\Collections\ArrayCollection();
+        
+        $this->existe=true;
+    }
+    
+    /**
+     * Add solutions
+     *
+     * @param solver\solverBundle\Entity\solutions $solutions
+     */
+    public function addsolutions(\solver\solverBundle\Entity\solutions $solutions)
+    {
+        $this->solutions[] = $solutions;
+    }
+
+    /**
+     * Get solutions
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getSolutions()
+    {
+        return $this->solutions;
     }
 }

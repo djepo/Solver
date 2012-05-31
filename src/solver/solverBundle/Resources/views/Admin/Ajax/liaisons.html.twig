@@ -8,7 +8,7 @@
 	$("#container_treeview").jstree({
             "html_data" : {
                 "ajax" : {
-                    "url" : "{{url('admin_ajax_liaisonstreeviewentitesaction')}}",
+                    "url" : "{{url('admin_ajax_liaisonsTreeviewLoad')}}",
                     //"data" :    function (n) {return { id : n.attr ? n.attr("id"):0};},
                     "data" :    function (n) {
                                                 if (n.attr) {
@@ -33,15 +33,24 @@
                                             "root":     {
                                                             "delete_node":  false,
                                                             "rename_node":  false,
+                                                            "icon": {
+                                                                        "image":    "{{asset('bundles/solvermain/images/treeview/root_icon.png')}}",
+                                                                    },
                                                         },
                                             "entite":   {
-
+                                                            "icon": {
+                                                                        "image":    "{{asset('bundles/solvermain/images/treeview/something_icon.png')}}",
+                                                                    },
                                                         },
                                             "probleme": {
-
+                                                            "icon": {
+                                                                        "image":    "{{asset('bundles/solvermain/images/treeview/problem_icon.png')}}",
+                                                                    },
                                                         },
                                             "solution": {
-
+                                                            "icon": {
+                                                                        "image":    "{{asset('bundles/solvermain/images/treeview/solution_icon.png')}}",
+                                                                    },
                                                         },
                                         },
                         },
@@ -54,30 +63,60 @@
     {
         // The default set of all items
         var items = {
-                        createItem: {
-                                        label: "Nouveau problème",
-                                        action: function (obj) {this.create(obj);},
-                                        separator_after:    true,
-                                    },
-                        renameItem: { // The "rename" menu item
-                                        label: "Renommer",
-                                        action: function (obj) {this.rename(obj);},
-                                    },
-                        deleteItem: { // The "delete" menu item
-                                        label: "Effacer",
-                                        action: function (obj) {this.delete(obj)},
-                                        separator_after:    true,
-                                    }
+                        createEntite: {
+                                            label: "Nouvelle entité",                                            
+                                            action: function (obj) {this.create(obj, "last", {"attr" : {"rel" : "entite"}});},
+                                        },
+                        createSolution: {
+                                            label: "Nouvelle solution",                                            
+                                            action: function (obj) {this.create(obj, "last", {"attr" : {"rel" : "solution"}});},
+                                        },
+                        createProbleme: {
+                                            label: "Nouveau problème",                                            
+                                            action: function (obj) {this.create(obj, "last", {"attr" : {"rel" : "probleme"}});},
+                                        },
+                        renameItem:     { // The "rename" menu item
+                                            label: "Renommer",
+                                            separator_before:   true,
+                                            action: function (obj) {this.rename(obj);},
+                                            
+                                        },
+                        deleteItem:     { // The "delete" menu item
+                                            label: "Effacer",
+                                            //action: function (obj) {this.remove(obj)},
+                                            action: function (obj){myRemove(obj);},
+                                            separator_after:    true,
+                                        }
                     };
 
         if ($(node).attr("rel")=="root")
-        {
-            // Delete the "delete" menu item
-            //delete items.deleteItem;
-            items.createItem.label="Nouvelle Entité";
+        {            
+            delete items.createSolution;
+            delete items.createProbleme;
             items.deleteItem._disabled=true;
             items.renameItem._disabled=true;            
         }
+        else
+        {
+            switch ($(node).attr("rel").substring(0,1))
+            {
+                case "e":
+                    delete items.createSolution;
+                    delete items.createEntite;
+                    break;
+                case "p":                    
+                    delete items.createEntite;                    
+                    break;
+                case "s":
+                    delete items.createEntite;
+                    delete items.createSolution;
+                    delete items.createProbleme;                    
+                    break;
+                default:
+                    break;
+            }
+        }
+        
 
         return items;   
     }
@@ -90,17 +129,18 @@
     });
     //redirection de la création par défaut dans la fonction create
     $(function() {
-        $("#container_treeview").bind("create.jstree", function(e,data) {
+        $("#container_treeview").bind("create.jstree", function(e,data) {            
             create (e, data);
         });
-    });
-    
+    });    
 
     function rename(e, data)
-    {
-        //mémorisation de l'icone du noeud, et démararge de l'indicateur ajax        
+    {        
+        var node = data.rslt.obj;
+        
         nodeImg=data.args[0].children("a");
-        $(nodeImg).attr("class","jstree-loading");        
+        //$(nodeImg).attr("class","jstree-loading"); 
+        node.children("a").attr("class","jstree-loading");  //démarrage de l'icône ajax
         
         if (data.args[0].attr("id")!="root")
         {
@@ -112,8 +152,9 @@
                 $.ajax({async:false,
                         type: 'POST',
                         url: '{{url('admin_ajax_liaisonstreeview_Rename')}}',
-                        data: { 'id': id,
-                                'libelle': libelle,
+                        data: { 'id':       id,
+                                'type':     node.attr("rel"),
+                                'libelle':  libelle,
                               },
                         success: function(data, textStatus, jqXHR)
                             {
@@ -121,10 +162,8 @@
                                 $("#container_treeview li").each(function(){
                                     id2=$(this).attr("id");
                                     if(id2==id)
-                                    {
-                                        //valins=$(this).children("a").children("ins");
-                                        valins=$(this).children("a > ins").text();
-                                        //alert($(valins).html());
+                                    {                                        
+                                        valins=$(this).children("a > ins").text();                                     
                                         $(this).children("a").html('<ins class="jstree-icon">&nbsp;</ins>'+libelle);
                                         
                                     }
@@ -147,24 +186,20 @@
     }
     
     function create (e, data)
-    {
-        //nodeImg=data.args[0].children("a");
-        //$(nodeImg).attr("class","jstree-loading");
-        
-        //alert ('creation');
-        //var parent_id=data.args[0].attr("id");
+    {        
         var parent_id=data.rslt.parent[0].id;
         var libelle=data.rslt.name;        
         var node = data.rslt.obj;
 
-        node.children("a").attr("class","jstree-loading");
+        node.children("a").attr("class","jstree-loading");  //démarrage de l'icône ajax
         
         $.ajax({
                 async: false,
                 type:"POST",
                 url: '{{url('admin_ajax_liaisonstreeview_create')}}',
-                data:   {   'parent_id':    parent_id,
-                            'libelle':      libelle,
+                data:   {   'parent_id':    parent_id,          //l'identifiant du parent
+                            'type':         node.attr('rel'),   //le type de noeud créé (l'attribut rel)
+                            'libelle':      libelle,            //le libellé créé
                         },
                 success: function(json_data, textStatus, jqXHR)
                          {
@@ -192,23 +227,8 @@
                              }
                              
                              if (prefixe_id!=null) {
-                                node.attr("id",prefixe_id+json_data.id);   //insertion de l'id du noeud en fonction de son préfixe et de l'id renvoyée
-                                switch(prefixe_id)
-                                {
-                                 case "e":
-                                     node.attr("rel","entite");
-                                     break;
-                                 case "p":
-                                     node.attr("rel","probleme");
-                                     break;
-                                 case "s":
-                                     node.attr("rel","solution");
-                                     break;
-                                 default:
-                                     break;
-                                }                                
-                             }
-                                                          
+                                node.attr("id",prefixe_id+json_data.id);   //insertion de l'id du noeud en fonction de son préfixe et de l'id renvoyée                               
+                             }                                                          
                          },
                 error:   function (jqXHR, textStatus, errorThrown)
                          {
@@ -216,10 +236,14 @@
                             $.jstree.rollback(data.rlbk);
                          },
         });
+                
+        node.children("a").attr("class","jstree-clicked");  //fin de l'icone de travail ajax, remise en place de l'icone par défaut
         
-        //$(nodeImg).attr("class","jstree-clicked");  //on enleve l'indicateur ajax pour remettre l'icone par défaut
-        node.children("a").attr("class","jstree-clicked");
-        
+    }
+    
+    function myRemove(obj)
+    {
+        alert ('remove');
     }
 
 </script>

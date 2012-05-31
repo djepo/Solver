@@ -1,5 +1,13 @@
+{%if solutions|length>0 %}
+    {%for solution in solutions %}
+        <li id='s{{solution.id}}' rel="solution" title="Solution">
+            <a href="#">{{solution.titre}}</a>        
+        </li>
+    {%endfor%}
+{%endif%}
+    
 {%for probleme in problemes %}
-    <li {%if probleme.problemeamont.problemesamont|length>0%}class="jstree-closed"{%endif%} id='p{{probleme.problemeamont.id}}' rel="probleme">
+    <li {%if probleme.problemeamont.problemesamont|length>0%}class="jstree-closed"{%endif%} id='p{{probleme.problemeamont.id}}' rel="probleme" title="Problème">
         <a href="#">{{probleme.problemeamont.libelle}}</a>        
     </li>
 {%endfor%}

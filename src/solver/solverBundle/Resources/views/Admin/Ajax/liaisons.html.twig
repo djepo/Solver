@@ -241,8 +241,11 @@
         
     }
     
+    /**
+    * Lors d'un appel a la supression, affiche une boite de confirmation, et apelle la fonction adéquate en cas d'acceptation
+    **/
     function myRemove(obj)
-    {
+    {        
         var $dialog= $('<div></div>').html('Voulez-vous réellement effacer "'+obj.children('a').text()+'" ?')
                                      .dialog({  resizable:  false,
                                                 //height:     140,
@@ -263,6 +266,9 @@
     **/
     function callRemoveConfirmed(node)
     {
+        
+        node.children("a").attr("class","jstree-loading");  //démarrage de l'icône ajax
+        
         $.ajax({
                 async:  false,
                 type:   "POST",

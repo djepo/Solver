@@ -281,22 +281,24 @@ class AdminController extends Controller {
             if (substr($chain[$level], 0, 1) == 'e') {
                 //level 0, on va renvoyer les problèmes liés à l'entité
                 $entite_id = substr($chain[$level], 1, strlen($chain[$level]) - 1);
-                $problemes = $em->getRepository('solversolverBundle:problemes')->findBy(array('entite' => $entite_id), array('libelle' => 'ASC'));
+                $problemes = $em->getRepository('solversolverBundle:problemes')->findBy(array('entite' => $entite_id, 'existe'=>true), array('libelle' => 'ASC'));
                 return $this->render('solversolverBundle:Admin/Ajax/Treeview:problemesParEntite.html.twig', array('problemes' => $problemes,));
             } else {
                 //level supérieur à 0, on va renvoyer les problèmes liés à un problème
                 $probleme_id = substr($chain[$level], 1, strlen($chain[$level]) - 1);
-                $problemes = $em->getRepository('solversolverBundle:probleme_probleme')->findBy(array('probleme_aval' => $probleme_id), array());
-                $solutions = $em->getRepository("solversolverBundle:solutions")->findBy(array("probleme" => $probleme_id), array("priorite"=>"ASC", "titre"=>"ASC"));
                 
+                // TODO: Créer une requête pour pouvoir avoir la liste des problèmes amonts avec le falg existe à true ou false.                
+                $problemes = $em->getRepository('solversolverBundle:probleme_probleme')->findBy(array('probleme_aval' => $probleme_id), array());
+                $solutions = $em->getRepository("solversolverBundle:solutions")->findBy(array("probleme" => $probleme_id, 'existe'=>true), array("priorite" => "ASC", "titre" => "ASC"));
+
                 return $this->render('solversolverBundle:Admin/Ajax/Treeview:problemesParProbleme.html.twig', array('problemes' => $problemes,
-                                                                                                                    'solutions' => $solutions,
-                                                                                                                    )
-                                    );
+                            'solutions' => $solutions,
+                                )
+                );
             }
         } else {
             //pas d'id définie, on va donc renvoyer la liste des entités
-            $entites = $em->getRepository('solversolverBundle:entites')->findBy(array(), array('libelle' => 'ASC'));
+            $entites = $em->getRepository('solversolverBundle:entites')->findBy(array('existe'=>true), array('libelle' => 'ASC'));
             return $this->render('solversolverBundle:Admin/Ajax/Treeview:entites.html.twig', array('entites' => $entites,));
         }
     }
@@ -325,7 +327,7 @@ class AdminController extends Controller {
         //if (substr($param_id, 0, 1) == 'e') {
         if ($param_type == 'entite') {
             //l'id commence par "e", c'est donc une entité
-            
+
             $entite_id = substr($param_id, 1, strlen($param_id) - 1);
             $entite = $em->getRepository('solversolverBundle:entites')->find($entite_id);
             if (!$entite) {
@@ -346,7 +348,7 @@ class AdminController extends Controller {
             }
         } elseif ($param_type == 'probleme') {
             //l'id ne commence pas par e, c'est donc un problème
-            
+
             $probleme_id = substr($param_id, 1, strlen($param_id) - 1);
             $probleme = $em->getRepository('solversolverBundle:problemes')->find($probleme_id);
             if (!$probleme) {
@@ -366,24 +368,23 @@ class AdminController extends Controller {
             }
         } elseif ($param_type == 'solution') {
             //on va renommer une solution
-            
-            $solution_id=substr($param_id, 1, strlen($param_id) - 1);
+
+            $solution_id = substr($param_id, 1, strlen($param_id) - 1);
             $solution = $em->getRepository('solversolverBundle:solutions')->find($solution_id);
             if (!$solution) {
                 throw $this->createNotFoundException('Erreur: solution introuvable.');
             }
             $solution->setTitre($param_value);
-            
+
             $validator = $this->get('validator');
             $errors = $validator->validate($solution);
             if (count($errors) == 0) {
                 $em->persist($solution);
                 $em->flush();
                 return new Response('ok');
-            } else {                
+            } else {
                 return new Response(print_r($errors, true));
             }
-            
         } else {
             //Type envoyé inconnu, on va renvoyer une erreur
             throw $this->createNotFoundException('Erreur: Type envoyé inconnu, ou non géré par le contrôleur.');
@@ -445,7 +446,7 @@ class AdminController extends Controller {
 
                 $probleme->setLibelle($libelle);
                 $probleme->setEntite($entite);
-                
+
                 $validator = $this->get('validator');
                 $errors = $validator->validate($probleme);
                 if (count($errors) == 0) {
@@ -484,7 +485,7 @@ class AdminController extends Controller {
                     $liaison_problemes->setProblemeAval($probleme_parent);
                     $liaison_problemes->setProblemeAmont($probleme);
                     //TODO: validation de la liaison entre problèmes
-                    
+
                     $validator = $this->get('validator');
                     $errors = $validator->validate($probleme);
                     if (count($errors) == 0) {
@@ -509,8 +510,8 @@ class AdminController extends Controller {
                         $response->headers->set('Content-Type', 'application/json');
                         return $response;
                     }
-                } elseif($type=="solution") {
-                    //on ajoute une solution à un problème                    
+                } elseif ($type == "solution") {
+                    //on ajoute une solution à un problème
                     $solution = new \solver\solverBundle\Entity\solutions();
                     $probleme_id = substr($parent_id, 1, strlen($parent_id) - 1);
                     $probleme = $em->getRepository('solversolverBundle:problemes')->find($probleme_id);
@@ -519,7 +520,7 @@ class AdminController extends Controller {
                     }
                     $solution->setTitre($libelle);
                     $solution->setProbleme($probleme);
-                    
+
                     $validator = $this->get('validator');
                     $errors = $validator->validate($solution);
                     if (count($errors) == 0) {
@@ -527,24 +528,20 @@ class AdminController extends Controller {
                         $em->flush();
 
                         $response = new Response(json_encode(array("type" => "solution",
-                                                                   "id" => $solution->getId(),
-                                                                   "libelle" => $solution->getLibelle(),
-                                                                   "existe" => $solution->getExiste()
-                                                                  )
-                                                            )
-                                                );
+                                            "id" => $solution->getId(),
+                                            "libelle" => $solution->getLibelle(),
+                                            "existe" => $solution->getExiste()
+                                                )
+                                        )
+                        );
                         $response->headers->set('Content-Type', 'application/json');
                         return $response;
                     } else {
                         $response = new Response(json_encode(array("type" => "error",
-                                                                    "libelle" => $errors)));
+                                            "libelle" => $errors)));
                         $response->headers->set('Content-Type', 'application/json');
                         return $response;
-                }
-                
-                
-                
-                    
+                    }
                 }
             } else {
                 $response = new Response(json_encode(array("type" => "error",
@@ -553,6 +550,67 @@ class AdminController extends Controller {
                 return $response;
             }
         }
+    }
+
+    /**
+     * @Route("/Ajax/Liaisons/Treeview/Remove", name="admin_ajax_liaisonstreeview_remove")
+     */
+    public function admin_ajax_liaisonsTreeviewRemoveAction() {
+        $request = $this->getRequest();
+        $id = $request->request->get('id');
+        $id = substr($id, 1, strlen($id) - 1);
+        $type = $request->get('type');
+
+        //initialisation de la réponse avec un succès. En cas d'erreur, la variable sera systématiquement redéfinie.
+        $response = new Response(json_encode(array("type" => "success", "libelle" => "")));
+
+        if (!$id || !$type) {
+            $response = new Response("Erreur de passage de paramètres",400);
+        } else {
+
+            $em = $this->getDoctrine()->getEntityManager();
+
+            switch ($type) {
+                case "root":
+                    $response = new Response("Suppression du noeud racine interdite.", 400);
+                    break;
+                case "entite":
+                    $entite = $em->getRepository('solversolverBundle:entites')->find($id);
+                    if (!$entite) {
+                        $response = new Response("Entité introuvable", 400);
+                    } else {
+                        $entite->setExiste(false);
+                        $em->persist($entite);
+                        $em->flush();
+                    }
+                    break;
+                case "probleme":
+                    $probleme = $em->getRepository('solversolverBundle:problemes')->find($id);
+                    if (!$probleme) {
+                        $response = new Response("Problème introuvable", 400);
+                    } else {
+                        $probleme->setExiste(false);
+                        $em->persist($probleme);
+                        $em->flush();
+                    }
+                    break;
+                case "solution":
+                    $solution = $em->getRepository('solversolverBundle:solutions')->find($id);
+                    if (!$solution) {
+                        $response = new Response("Solution introuvable", 400);
+                    } else {
+                        $solution->setExiste(false);
+                        $em->persist($solution);
+                        $em->flush();
+                    }
+                    break;
+                default:
+                    $response = new Response("Type de noeud inconnu ou non géré par le contrôleur.", 501);
+                    break;
+            }
+        }
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
 
 }

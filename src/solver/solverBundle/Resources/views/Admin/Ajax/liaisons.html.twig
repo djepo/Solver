@@ -243,7 +243,61 @@
     
     function myRemove(obj)
     {
-        alert ('remove');
+        var $dialog= $('<div></div>').html('Voulez-vous réellement effacer "'+obj.children('a').text()+'" ?')
+                                     .dialog({  resizable:  false,
+                                                //height:     140,
+                                                modal:      true,
+                                                title:      "Attention requise",
+                                                dialogClass:"alert",
+                                                buttons: {  "Non":   function() {$(this).dialog('close');},
+                                                            "Oui":   function() {$(this).dialog('close'); callRemoveConfirmed(obj);},
+                                                         },
+                                            });
+        
+       
+        $dialog.dialog('open');        
     }
-
+    
+    /**
+    * Fonction appelée après la confirmation utilisateur d'effacement d'un noeud.
+    **/
+    function callRemoveConfirmed(node)
+    {
+        $.ajax({
+                async:  false,
+                type:   "POST",
+                url:    '{{url('admin_ajax_liaisonstreeview_remove')}}',
+                data:   {   'id':   node.attr('id'),
+                            'type': node.attr('rel'),                            
+                        },
+                success:function(json_data, textStatus, jqXHR)
+                        {
+                            //$('#treeviewn').remove();
+                            //rafraichissement de tous les noeuds ayant le même id
+                            $("#container_treeview li").each(function(){
+                                id2=$(this).attr("id");
+                                if(id2==node.attr('id'))
+                                {                                       
+                                    $('#container_treeview').jstree("delete_node",'#'+id2);
+                                }
+                            });  
+                        },
+                error:  function (jqXHR, textStatus, errorThrown)
+                        {
+                            displayError(jqXHR.responseText)                            
+                        },
+        });
+    }
+    
+    function displayError(text)
+    {
+        var $error_dialog= $('<div></div>').html(text)
+                                     .dialog({  resizable:  false,                                                
+                                                modal:      true,
+                                                title:      "Erreur",
+                                                dialogClass:"error", 
+                                                autoOpen:   false,
+                                            });       
+        $error_dialog.dialog('open');   
+    }
 </script>

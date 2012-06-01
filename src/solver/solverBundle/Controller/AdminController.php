@@ -286,9 +286,9 @@ class AdminController extends Controller {
             } else {
                 //level supérieur à 0, on va renvoyer les problèmes liés à un problème
                 $probleme_id = substr($chain[$level], 1, strlen($chain[$level]) - 1);
-                
-                // TODO: Créer une requête pour pouvoir avoir la liste des problèmes amonts avec le falg existe à true ou false.                
-                $problemes = $em->getRepository('solversolverBundle:probleme_probleme')->findBy(array('probleme_aval' => $probleme_id), array());
+                                
+                //$problemes = $em->getRepository('solversolverBundle:probleme_probleme')->findBy(array('probleme_aval' => $probleme_id), array());
+                $problemes = $em->getRepository('solversolverBundle:probleme_probleme')->getProblemesAmont($probleme_id);                
                 $solutions = $em->getRepository("solversolverBundle:solutions")->findBy(array("probleme" => $probleme_id, 'existe'=>true), array("priorite" => "ASC", "titre" => "ASC"));
 
                 return $this->render('solversolverBundle:Admin/Ajax/Treeview:problemesParProbleme.html.twig', array('problemes' => $problemes,

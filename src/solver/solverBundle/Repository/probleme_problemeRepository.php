@@ -12,5 +12,31 @@ use Doctrine\ORM\EntityRepository;
  */
 class probleme_problemeRepository extends EntityRepository
 {
-
+    /**
+     * Requête renvoyant les causes d'un problème donné, en vérifiant si ces causes existe (optionnel)
+     * les résultats sont ordonnés par ordre alphabétique de libellé des causes
+     * 
+     * @param int $probleme_aval_id L'identifiant du problème pour lequel on veut toutes les causes (=les problemes amont)
+     * @param boolean $check_existence Flag indiquant si on doit vérifier l'existence des problemes ou non. True: On ne renverra que les existants, False: on renvoie tout.
+     * @return type 
+     */
+    public function getProblemesAmont($probleme_aval_id=null,$check_existence=true) {
+        $em=$this->_em;
+        
+        $qb=$this->createQueryBuilder('pp');        
+        $qb->leftJoin('pp.probleme_amont', 'pp_amont');
+        if ($check_existence=true) {
+            $qb->where('pp_amont.existe=true');
+            if ($probleme_aval_id!=null) {
+                $qb->andWhere('pp.probleme_aval='.$probleme_aval_id);
+            }
+        } else {
+        if ($probleme_aval_id!=null) {
+                $qb->Where('pp.probleme_aval='.$probleme_aval_id);
+            }    
+        }
+        $qb->addOrderBy('pp_amont.libelle');
+        
+        return $qb->getQuery()->execute();
+    }
 }

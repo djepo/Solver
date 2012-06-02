@@ -613,4 +613,69 @@ class AdminController extends Controller {
         return $response;
     }
 
+    /**
+     * @Route("/Ajax/Liaisons/Treeview/Check", name="admin_ajax_liaisonstreeview_check")
+     */
+    public function admin_ajax_liaisonsTreeviewCheckAction()
+    {
+        $request = $this->getRequest();
+        $id = $request->request->get('id');
+        $id = substr($id, 1, strlen($id) - 1);
+        $type = $request->get('type');
+        $value = $request->get('value');
+        
+        //initialisation de la réponse avec un succès. En cas d'erreur, la variable sera systématiquement redéfinie.
+        $response = new Response(json_encode(array("type" => "success", "libelle" => "")));
+        
+        if (!$id || !$type || !$value) {
+            $response = new Response("Erreur de passage de paramètres",400);
+        } else {
+            $em = $this->getDoctrine()->getEntityManager();
+            if($value=='true') {$value=true;} else {$value=false;}  //les paramètres sont envoyés en string, il faut convertir en booléen pour la valeur de la checkbox
+                                                                    //placé ici, car le tests des paramètres ne passe pas si la valeur est fausse.
+            
+            switch ($type) {
+                case "root":
+                    $response = new Response("Modification du noeud racine interdite.", 400);
+                    break;
+                case "entite":
+                    $entite = $em->getRepository('solversolverBundle:entites')->find($id);
+                    if (!$entite) {
+                        $response = new Response("Entité introuvable", 400);
+                    } else {
+                        $entite->setAffiche($value);
+                        $em->persist($entite);
+                        $em->flush();
+                    }
+                    break;
+                case "probleme":
+                    $probleme = $em->getRepository('solversolverBundle:problemes')->find($id);
+                    if (!$probleme) {
+                        $response = new Response("Problème introuvable", 400);
+                    } else {
+                        $probleme->setAffiche($value);
+                        $em->persist($probleme);
+                        $em->flush();
+                    }
+                    break;
+                case "solution":
+                    $solution = $em->getRepository('solversolverBundle:solutions')->find($id);
+                    if (!$solution) {
+                        $response = new Response("Solution introuvable", 400);
+                    } else {
+                        $solution->setAffiche($value);
+                        $em->persist($solution);
+                        $em->flush();
+                    }
+                    break;
+                default:
+                    $response = new Response("Type de noeud inconnu ou non géré par le contrôleur.", 501);
+                    break;
+            }
+        }
+        
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+        
+    }
 }

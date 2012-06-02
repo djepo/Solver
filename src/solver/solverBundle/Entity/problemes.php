@@ -70,11 +70,11 @@ class problemes
      */
     private $solutions;
     
-
-    
-    
-    
- 
+    /**
+     *  Permet à l'utilisateur d'afficher ou non l'entité
+     *  @ORM\Column(name="affiche", type="boolean", nullable=false)     
+     */
+    private $affiche; 
 
     
     /**
@@ -215,6 +215,7 @@ class problemes
         $this->solutions = new \Doctrine\Common\Collections\ArrayCollection();
         
         $this->existe=true;
+        $this->affiche=true;
     }
     
     /**
@@ -235,5 +236,25 @@ class problemes
     public function getSolutions()
     {
         return $this->solutions;
+    }
+
+    /**
+     * Set affiche
+     *
+     * @param boolean $affiche
+     */
+    public function setAffiche($affiche)
+    {
+        $this->affiche = $affiche;
+    }
+
+    /**
+     * Get affiche
+     *
+     * @return boolean 
+     */
+    public function getAffiche()
+    {
+        return $this->affiche;
     }
 }

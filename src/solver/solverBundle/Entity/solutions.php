@@ -46,6 +46,12 @@ class solutions
     private $probleme;
     
     /**
+     *  Permet à l'utilisateur d'afficher ou non l'entité
+     *  @ORM\Column(name="affiche", type="boolean", nullable=false)     
+     */
+    private $affiche;
+    
+    /**
      * Priorité d'affichage des solutions par rapport aux autres, dans un problème donné
      * @ORM\Column(name="priorite", type="integer", nullable=true)
      */
@@ -54,6 +60,7 @@ class solutions
     public function __construct()
     {
         $this->existe=true;
+        $this->affiche=true;
     }
     
     /**
@@ -164,5 +171,25 @@ class solutions
     public function getPriorite()
     {
         return $this->priorite;
+    }
+
+    /**
+     * Set affiche
+     *
+     * @param boolean $affiche
+     */
+    public function setAffiche($affiche)
+    {
+        $this->affiche = $affiche;
+    }
+
+    /**
+     * Get affiche
+     *
+     * @return boolean 
+     */
+    public function getAffiche()
+    {
+        return $this->affiche;
     }
 }

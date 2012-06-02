@@ -1,13 +1,20 @@
 {%if solutions|length>0 %}
     {%for solution in solutions %}
-        <li id='s{{solution.id}}' rel="solution" title="Solution">
+        <li class="
+                    {%if solution.affiche==true %} jstree-checked {%endif%}
+                  "
+            id='s{{solution.id}}' rel="solution" title="Solution">
             <a href="#">{{solution.titre}}</a>        
         </li>
     {%endfor%}
 {%endif%}
     
 {%for probleme in problemes %}
-    <li {%if probleme.problemeamont.problemesamont|length>0 or probleme.problemeamont.solutions|length>0%}class="jstree-closed"{%endif%} id='p{{probleme.problemeamont.id}}' rel="probleme" title="Problème">
+    <li class="
+            {%if probleme.problemeamont.problemesamont|length>0 or probleme.problemeamont.solutions|length>0%} jstree-closed {%endif%}
+            {%if probleme.problemeamont.affiche==true %} jstree-checked {%endif%}
+        "
+            id='p{{probleme.problemeamont.id}}' rel="probleme" title="Problème">
         <a href="#">{{probleme.problemeamont.libelle}}</a>        
     </li>
 {%endfor%}

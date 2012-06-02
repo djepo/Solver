@@ -41,13 +41,20 @@ class entites
      * @var boolean
      * @ORM\Column(name="existe", type="boolean", nullable=false)
      */
-    private $existe; 
+    private $existe;
+    
+    /**
+     *  Permet à l'utilisateur d'afficher ou non l'entité
+     *  @ORM\Column(name="affiche", type="boolean", nullable=false)     
+     */
+    private $affiche;
 
     
     public function __construct()
     {
         $this->problemes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->existe=true;
+        $this->affiche=true;
     }
     
     /**
@@ -118,5 +125,25 @@ class entites
     public function getExiste()
     {
         return $this->existe;
+    }
+
+    /**
+     * Set affiche
+     *
+     * @param boolean $affiche
+     */
+    public function setAffiche($affiche)
+    {
+        $this->affiche = $affiche;
+    }
+
+    /**
+     * Get affiche
+     *
+     * @return boolean 
+     */
+    public function getAffiche()
+    {
+        return $this->affiche;
     }
 }

@@ -8,7 +8,7 @@
 	$("#container_treeview").jstree({
             "html_data" : {
                 "ajax" : {
-                    "url" : "{{url('admin_ajax_liaisonsTreeviewLoad')}}",                    
+                    "url" : "{{url('admin_ajax_liaisonsTreeviewLoad')}}",
                     "data" :    function (n) {
                                                 if (n.attr) {
                                                     return {id:n.attr('id')};
@@ -34,7 +34,7 @@
                             "types":    {
                                             "root":     {
                                                             "delete_node":  false,
-                                                            "rename_node":  false,                                                            
+                                                            "rename_node":  false,
                                                             "icon": {
                                                                         "image":    "{{asset('bundles/solvermain/images/treeview/root_icon.png')}}",
                                                                     },
@@ -61,27 +61,27 @@
 
     //définition du menu pour le treeview
     //principe: on crée tout le menu, et on désactive ce qui ne sers pas, selon le type de noeud
-    function MenuPerso(node) 
+    function MenuPerso(node)
     {
         // The default set of all items
         var items = {
                         createEntite: {
-                                            label: "Nouvelle entité",                                            
+                                            label: "Nouvelle entité",
                                             action: function (obj) {this.create(obj, "last", {"attr" : {"rel" : "entite"}});},
                                         },
                         createSolution: {
-                                            label: "Nouvelle solution",                                            
+                                            label: "Nouvelle solution",
                                             action: function (obj) {this.create(obj, "last", {"attr" : {"rel" : "solution"}});},
                                         },
                         createProbleme: {
-                                            label: "Nouveau problème",                                            
+                                            label: "Nouveau problème",
                                             action: function (obj) {this.create(obj, "last", {"attr" : {"rel" : "probleme"}});},
                                         },
                         renameItem:     { // The "rename" menu item
                                             label: "Renommer",
                                             separator_before:   true,
                                             action: function (obj) {this.rename(obj);},
-                                            
+
                                         },
                         deleteItem:     { // The "delete" menu item
                                             label: "Effacer",
@@ -92,11 +92,11 @@
                     };
 
         if ($(node).attr("rel")=="root")
-        {            
+        {
             delete items.createSolution;
             delete items.createProbleme;
             items.deleteItem._disabled=true;
-            items.renameItem._disabled=true;            
+            items.renameItem._disabled=true;
         }
         else
         {
@@ -106,28 +106,28 @@
                     delete items.createSolution;
                     delete items.createEntite;
                     break;
-                case "p":                    
-                    delete items.createEntite;                    
+                case "p":
+                    delete items.createEntite;
                     break;
                 case "s":
                     delete items.createEntite;
                     delete items.createSolution;
-                    delete items.createProbleme;                    
+                    delete items.createProbleme;
                     break;
                 default:
                     break;
             }
         }
-        
 
-        return items;   
+
+        return items;
     }
-    
+
     $("#container_treeview").bind("loaded.jstree", function(e, data) {
         //cache la checkbox du root
         $("#root").children('a').find('ins.jstree-checkbox').hide();
     });
-    
+
     //redirection du renommage par défaut dans la fonction rename
     $(function() {
         $("#container_treeview").bind('rename.jstree', function(e, data){
@@ -136,19 +136,30 @@
     });
     //redirection de la création par défaut dans la fonction create
     $(function() {
-        $("#container_treeview").bind("create.jstree", function(e,data) {            
+        $("#container_treeview").bind("create.jstree", function(e,data) {
             create (e, data);
         });
-    });    
+    });
+     //redirection de la modification des cases a cocher par défaut dans la fonction check
+    $(function() {
+        $("#container_treeview").bind("check_node.jstree", function(e,data) {
+            check_node (e, data);
+        });
+    });
+    //redirection de la modification des cases a cocher par défaut dans la fonction check
+    $(function() {
+        $("#container_treeview").bind("uncheck_node.jstree", function(e,data) {
+            check_node (e, data);
+        });
+    });
 
     function rename(e, data)
-    {        
+    {
         var node = data.rslt.obj;
-        
-        nodeImg=data.args[0].children("a");
-        //$(nodeImg).attr("class","jstree-loading"); 
+
+        $("#container_treeview").jstree("deselect_all");
         node.children("a").attr("class","jstree-loading");  //démarrage de l'icône ajax
-        
+
         if (data.args[0].attr("id")!="root")
         {
             if(data.rslt.new_name!=data.rslt.old_name)
@@ -169,15 +180,16 @@
                                 $("#container_treeview li").each(function(){
                                     id2=$(this).attr("id");
                                     if(id2==id)
-                                    {                                        
-                                        valins=$(this).children("a > ins").text();                                     
+                                    {
+                                        valins=$(this).children("a > ins").text();
                                         $(this).children("a").html('<ins class="jstree-icon">&nbsp;</ins>'+libelle);
-                                        
+
                                     }
-                                });                                
+                                });
                             },
                         error:  function (jqXHR, textStatus, errorThrown)
                             {
+                                displayError(jqXHR.responseText);
                                 $.jstree.rollback(data.rlbk);
                             }
                 });
@@ -188,18 +200,19 @@
                 $.jstree.rollback(data.rlbk);
             };
         }
-        
-        $(nodeImg).attr("class","jstree-clicked");  //on enleve l'indicateur ajax pour remettre l'icone par défaut
+
+        node.children("a").attr("class","jstree-clicked");  //on enleve l'indicateur ajax pour remettre l'icone par défaut
     }
-    
+
     function create (e, data)
-    {        
+    {
         var parent_id=data.rslt.parent[0].id;
-        var libelle=data.rslt.name;        
+        var libelle=data.rslt.name;
         var node = data.rslt.obj;
 
+        $("#container_treeview").jstree("deselect_all");
         node.children("a").attr("class","jstree-loading");  //démarrage de l'icône ajax
-        
+
         $.ajax({
                 async: false,
                 type:"POST",
@@ -211,7 +224,7 @@
                 success: function(json_data, textStatus, jqXHR)
                          {
                              var prefixe_id=null;
-                             
+
                              switch(json_data.type)
                              {
                                  case "entite":
@@ -232,23 +245,23 @@
                                      $.jstree.rollback(data.rlbk);
                                      break;
                              }
-                             
+
                              if (prefixe_id!=null) {
-                                node.attr("id",prefixe_id+json_data.id);   //insertion de l'id du noeud en fonction de son préfixe et de l'id renvoyée                               
+                                node.attr("id",prefixe_id+json_data.id);   //insertion de l'id du noeud en fonction de son préfixe et de l'id renvoyée
                              }
-                             
+
                              //rafraichissement de tous les noeuds ayant le même id
                              var parent_found=false;
                              $("#container_treeview li").each(function(){
                                 id_parcouru=$(this).attr("id");
-                                
+
                                 if(id_parcouru==parent_id)
                                 {
                                     parent_found=true;
                                     var child_found=false;
-                                    
-                                    $(this).children('ul').children('li').each(function(){                                        
-                                        if($(this).attr('id')==prefixe_id+json_data.id) {child_found=true}                                        
+
+                                    $(this).children('ul').children('li').each(function(){
+                                        if($(this).attr('id')==prefixe_id+json_data.id) {child_found=true}
                                     });
                                 }
                                 if (parent_found==true && child_found==false )
@@ -258,25 +271,25 @@
                                         parent_found=false;
                                         child_found=false;
                                     }
-                                    
-                            });                             
+
+                            });
                          },
                 error:   function (jqXHR, textStatus, errorThrown)
                          {
-                            alert ('error');
+                            displayError(jqXHR.responseText);
                             $.jstree.rollback(data.rlbk);
                          },
         });
-                
+
         node.children("a").attr("class","jstree-clicked");  //fin de l'icone de travail ajax, remise en place de l'icone par défaut
-        
+
     }
-    
+
     /**
     * Lors d'un appel a la supression, affiche une boite de confirmation, et apelle la fonction adéquate en cas d'acceptation
     **/
     function myRemove(obj)
-    {        
+    {
         var $dialog= $('<div></div>').html('Voulez-vous réellement effacer "'+obj.children('a').text()+'" ?')
                                      .dialog({  resizable:  false,
                                                 //height:     140,
@@ -287,54 +300,102 @@
                                                             "Oui":   function() {$(this).dialog('close'); callRemoveConfirmed(obj);},
                                                          },
                                             });
-        
-       
-        $dialog.dialog('open');        
+
+
+        $dialog.dialog('open');
     }
-    
+
     /**
     * Fonction appelée après la confirmation utilisateur d'effacement d'un noeud.
     **/
     function callRemoveConfirmed(node)
     {
-        
+        $("#container_treeview").jstree("deselect_all");
         node.children("a").attr("class","jstree-loading");  //démarrage de l'icône ajax
-        
+
         $.ajax({
                 async:  false,
                 type:   "POST",
                 url:    '{{url('admin_ajax_liaisonstreeview_remove')}}',
                 data:   {   'id':   node.attr('id'),
-                            'type': node.attr('rel'),                            
+                            'type': node.attr('rel'),
                         },
                 success:function(json_data, textStatus, jqXHR)
                         {
-                            //$('#treeviewn').remove();
                             //rafraichissement de tous les noeuds ayant le même id
                             $("#container_treeview li").each(function(){
                                 id2=$(this).attr("id");
                                 if(id2==node.attr('id'))
-                                {                                       
+                                {
                                     $('#container_treeview').jstree("delete_node",'#'+id2);
                                 }
-                            });  
+                            });
                         },
                 error:  function (jqXHR, textStatus, errorThrown)
                         {
-                            displayError(jqXHR.responseText)                            
+                            displayError(jqXHR.responseText);
                         },
         });
     }
-    
+
+    function check_node(e, data)
+    {
+        //alert('check');
+        var node = data.rslt.obj;
+        $("#container_treeview").jstree("deselect_all");
+
+        node.children("a").attr("class","jstree-loading");  //démarrage de l'icône ajax
+
+        var id=node.attr("id");
+        var value=$("#container_treeview").jstree("is_checked", node);
+
+                $.ajax({async:false,
+                        type: 'POST',
+                        url: '{{url('admin_ajax_liaisonstreeview_check')}}',
+                        data: { 'id':       id,
+                                'type':     node.attr("rel"),
+                                'value':  value,
+                              },
+                        success: function(data, textStatus, jqXHR)
+                            {
+                                //rafraichissement de tous les noeuds ayant le même id
+                                $("#container_treeview li").each(function(){
+                                    id2=$(this).attr("id");
+                                    if(id2==id)
+                                    {
+                                        if (value==true) {                                            
+                                            if ($(this).hasClass('jstree-unchecked')) {
+                                                $(this).toggleClass('jstree-unchecked jstree-checked');                                            
+                                            }
+                                        } else {
+                                            if ($(this).hasClass('jstree-checked')) {
+                                                $(this).toggleClass('jstree-unchecked jstree-checked');                                            
+                                            }
+                                        }
+                                    }
+                                });
+                            },
+                        error:  function (jqXHR, textStatus, errorThrown)
+                                {
+                                    displayError(jqXHR.responseText);
+                                    $.jstree.rollback(data.rlbk);
+                                },
+                });
+
+
+
+        node.children("a").attr("class","jstree-clicked");  //fin de l'icone de travail ajax, remise en place de l'icone par défaut
+    }
+
     function displayError(text)
     {
         var $error_dialog= $('<div></div>').html(text)
-                                     .dialog({  resizable:  false,                                                
+                                     .dialog({  resizable:  false,
                                                 modal:      true,
                                                 title:      "Erreur",
-                                                dialogClass:"error", 
+                                                dialogClass:"error",
                                                 autoOpen:   false,
-                                            });       
-        $error_dialog.dialog('open');   
+                                            });
+        $error_dialog.dialog('open');
     }
 </script>

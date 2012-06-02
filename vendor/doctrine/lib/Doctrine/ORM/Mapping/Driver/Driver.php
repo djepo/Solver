@@ -28,7 +28,6 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
  *
  * @since 2.0
  * @author Jonathan H. Wage <jonwage@gmail.com>
- * @todo Rename: MetadataDriver or MappingDriver
  */
 interface Driver
 {

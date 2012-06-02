@@ -28,7 +28,6 @@ use Doctrine\DBAL\DBALException;
  * @since 2.0
  * @author Roman Borschel <roman@code-factory.org>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @todo Rename: SQLitePlatform
  */
 class SqlitePlatform extends AbstractPlatform
 {

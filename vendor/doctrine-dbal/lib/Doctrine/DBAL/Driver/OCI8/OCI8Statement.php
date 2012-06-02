@@ -66,8 +66,6 @@ class OCI8Statement implements \Doctrine\DBAL\Driver\Statement
      * Question marks inside literal strings are therefore handled correctly by this method.
      * This comes at a cost, the whole sql statement has to be looped over.
      *
-     * @todo extract into utility class in Doctrine\DBAL\Util namespace
-     * @todo review and test for lost spaces. we experienced missing spaces with oci8 in some sql statements.
      * @param string $statement The SQL statement to convert.
      * @return string
      */

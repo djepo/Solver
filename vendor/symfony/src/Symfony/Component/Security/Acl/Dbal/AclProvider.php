@@ -111,9 +111,6 @@ class AclProvider implements AclProviderInterface
                 $acl = $this->loadedAcls[$oid->getType()][$oid->getIdentifier()];
 
                 if (!$acl->isSidLoaded($sids)) {
-                    // FIXME: we need to load ACEs for the missing SIDs. This is never
-                    //        reached by the default implementation, since we do not
-                    //        filter by SID
                     throw new \RuntimeException('This is not supported by the default implementation.');
                 } else {
                     $result->attach($oid, $acl);
@@ -209,8 +206,7 @@ class AclProvider implements AclProviderInterface
      */
     protected function getLookupSql(array $ancestorIds)
     {
-        // FIXME: add support for filtering by sids (right now we select all sids)
-
+        
         $sql = <<<SELECTCLAUSE
             SELECT
                 o.id as acl_id,
@@ -384,7 +380,7 @@ QUERY;
 
         $ancestorIds = array();
         foreach ($this->connection->executeQuery($sql)->fetchAll() as $data) {
-            // FIXME: skip ancestors which are cached
+
 
             $ancestorIds[] = $data['ancestor_id'];
         }

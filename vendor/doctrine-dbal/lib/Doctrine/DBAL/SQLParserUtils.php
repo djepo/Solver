@@ -60,7 +60,7 @@ class SQLParserUtils
                     $paramMap[$count] = $i;
                 } else {
                     $name = "";
-                    // TODO: Something faster/better to match this than regex?
+
                     for ($j = $i; ($j < $stmtLen && preg_match('(([:a-zA-Z0-9]{1}))', $statement[$j])); $j++) {
                         $name .= $statement[$j];
                     }

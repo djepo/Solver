@@ -208,8 +208,8 @@ class CssSelector
             $peek = $stream->peek();
             if ('#' == $peek) {
                 if ($hasHash) {
-                    /* You can't have two hashes
-                        (FIXME: is there some more general rule I'm missing?) */
+                    /* You can't have two hashes */
+                        
                     // @codeCoverageIgnoreStart
                     break;
                     // @codeCoverageIgnoreEnd
@@ -248,7 +248,6 @@ class CssSelector
                     } elseif ($peek->isType('Symbol') && is_int($peek)) {
                         $selector = intval($stream->next());
                     } else {
-                        // FIXME: parseSimpleSelector, or selector, or...?
                         $selector = $this->parseSimpleSelector($stream);
                     }
                     $next = $stream->next();
@@ -269,7 +268,6 @@ class CssSelector
 
                 break;
             }
-            // FIXME: not sure what "negation" is
         }
 
         return $result;

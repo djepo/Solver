@@ -72,7 +72,7 @@ class JMSSecurityExtraExtension extends Extension
                 ->addTag('security.voter')
             ;
 
-            // FIXME: Also add an iddqd after invocation provider
+
         }
     }
 

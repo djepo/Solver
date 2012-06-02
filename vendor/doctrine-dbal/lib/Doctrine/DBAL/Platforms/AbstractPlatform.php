@@ -43,7 +43,6 @@ use Doctrine\DBAL\DBALException,
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  Lukas Smith <smith@pooteeweet.org> (PEAR MDB2 library)
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @todo Remove any unnecessary methods.
  */
 abstract class AbstractPlatform
 {
@@ -957,7 +956,7 @@ abstract class AbstractPlatform
             $columnData['length'] = $column->getLength();
             $columnData['notnull'] = $column->getNotNull();
             $columnData['fixed'] = $column->getFixed();
-            $columnData['unique'] = false; // TODO: what do we do about this?
+            $columnData['unique'] = false;
             $columnData['version'] = ($column->hasPlatformOption("version"))?$column->getPlatformOption('version'):false;
             if(strtolower($columnData['type']) == "string" && $columnData['length'] === null) {
                 $columnData['length'] = 255;

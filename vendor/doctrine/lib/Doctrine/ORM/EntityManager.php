@@ -429,7 +429,7 @@ class EntityManager implements ObjectManager
         if ($entityName === null) {
             $this->unitOfWork->clear();
         } else {
-            //TODO
+
             throw new ORMException("EntityManager#clear(\$entityName) not yet implemented.");
         }
     }
@@ -535,9 +535,7 @@ class EntityManager implements ObjectManager
      * Creates a copy of the given entity. Can create a shallow or a deep copy.
      *
      * @param object $entity  The entity to copy.
-     * @return object  The new entity.
-     * @todo Implementation need. This is necessary since $e2 = clone $e1; throws an E_FATAL when access anything on $e:
-     * Fatal error: Maximum function nesting level of '100' reached, aborting!
+     * @return object  The new entity.     
      */
     public function copy($entity, $deep = false)
     {

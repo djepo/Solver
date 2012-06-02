@@ -210,7 +210,7 @@ class ObjectHydrator extends AbstractHydrator
 
     private function _getEntityFromIdentityMap($className, array $data)
     {
-        // TODO: Abstract this code and UnitOfWork::createEntity() equivalent?
+
         $class = $this->_ce[$className];
         /* @var $class ClassMetadata */
         if ($class->isIdentifierComposite) {
@@ -298,7 +298,7 @@ class ObjectHydrator extends AbstractHydrator
 
                 // We have a RIGHT JOIN result here. Doctrine cannot hydrate RIGHT JOIN Object-Graphs
                 if (!isset($nonemptyComponents[$parentAlias])) {
-                    // TODO: Add special case code where we hydrate the right join objects into identity map at least
+
                     continue;
                 }
 
@@ -381,8 +381,7 @@ class ObjectHydrator extends AbstractHydrator
                             $this->_uow->setOriginalEntityProperty($oid, $relationField, $element);
                             $targetClass = $this->_ce[$relation['targetEntity']];
                             if ($relation['isOwningSide']) {
-                                //TODO: Just check hints['fetched'] here?
-                                // If there is an inverse mapping on the target class its bidirectional
+
                                 if ($relation['inversedBy']) {
                                     $inverseAssoc = $targetClass->associationMappings[$relation['inversedBy']];
                                     if ($inverseAssoc['type'] & ClassMetadata::TO_ONE) {

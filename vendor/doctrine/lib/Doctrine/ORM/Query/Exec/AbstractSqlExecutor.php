@@ -30,7 +30,6 @@ use Doctrine\DBAL\Connection;
  * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link        http://www.doctrine-project.org
  * @since       2.0
- * @todo Rename: AbstractSQLExecutor
  */
 abstract class AbstractSqlExecutor
 {

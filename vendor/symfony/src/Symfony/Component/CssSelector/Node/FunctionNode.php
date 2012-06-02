@@ -108,7 +108,6 @@ class FunctionNode implements NodeInterface
         }
 
         if ($last) {
-            // FIXME: I'm not sure if this is right
             $a = -$a;
             $b = -$b;
         }
@@ -137,13 +136,7 @@ class FunctionNode implements NodeInterface
         }
 
         return $xpath;
-        /* FIXME: handle an+b, odd, even
-             an+b means every-a, plus b, e.g., 2n+1 means odd
-             0n+b means b
-             n+0 means a=1, i.e., all elements
-             an means every a elements, i.e., 2n means even
-             -n means -1n
-             -1n+6 means elements 6 and previous */
+
     }
 
     /**
@@ -204,11 +197,9 @@ class FunctionNode implements NodeInterface
             $expr = $expr->formatElement();
         }
 
-        // FIXME: lower-case is only available with XPath 2
         //$xpath->addCondition(sprintf('contains(lower-case(string(.)), %s)', XPathExpr::xpathLiteral(strtolower($expr))));
         $xpath->addCondition(sprintf('contains(string(.), %s)', XPathExpr::xpathLiteral($expr)));
 
-        // FIXME: Currently case insensitive matching doesn't seem to be happening
 
         return $xpath;
     }
@@ -226,7 +217,6 @@ class FunctionNode implements NodeInterface
         // everything for which not expr applies
         $expr = $expr->toXpath();
         $cond = $expr->getCondition();
-        // FIXME: should I do something about element_path?
         $xpath->addCondition(sprintf('not(%s)', $cond));
 
         return $xpath;

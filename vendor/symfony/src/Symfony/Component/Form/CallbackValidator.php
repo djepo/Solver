@@ -17,8 +17,6 @@ class CallbackValidator implements FormValidatorInterface
 
     public function __construct($callback)
     {
-        // TODO validate callback
-
         $this->callback = $callback;
     }
 

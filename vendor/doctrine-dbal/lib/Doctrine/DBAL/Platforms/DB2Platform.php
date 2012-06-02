@@ -415,7 +415,7 @@ class DB2Platform extends AbstractPlatform
             }
         }
 
-        unset($field['default']); // @todo this needs fixing
+        unset($field['default']);
         if (isset($field['version']) && $field['version']) {
             if ((string)$field['type'] != "DateTime") {
                 $field['default'] = "1";
@@ -542,7 +542,6 @@ class DB2Platform extends AbstractPlatform
     /**
      * DB2 supports savepoints, but they work semantically different than on other vendor platforms.
      *
-     * TODO: We have to investigate how to get DB2 up and running with savepoints.
      *
      * @return bool
      */

@@ -113,7 +113,6 @@ class BasicEntityPersister
     /**
      * ResultSetMapping that is used for all queries. Is generated lazily once per request.
      *
-     * TODO: Evaluate Caching in combination with the other cached SQL snippets.
      *
      * @var Query\ResultSetMapping
      */
@@ -280,7 +279,6 @@ class BasicEntityPersister
         $versionField = $versionedClass->versionField;
         $identifier = $versionedClass->getIdentifierColumnNames();
         $versionFieldColumnName = $versionedClass->getColumnName($versionField);
-        //FIXME: Order with composite keys might not be correct
         $sql = "SELECT " . $versionFieldColumnName . " FROM " . $versionedClass->getQuotedTableName($this->_platform)
                . " WHERE " . implode(' = ? AND ', $identifier) . " = ?";
         $value = $this->_conn->fetchColumn($sql, array_values((array)$id));
@@ -381,8 +379,7 @@ class BasicEntityPersister
         }
     }
 
-    /**
-     * @todo Add check for platform if it supports foreign keys/cascading.
+    /**     
      * @param array $identifier
      * @return void
      */
@@ -561,7 +558,6 @@ class BasicEntityPersister
      * @param array $hints Hints for entity creation.
      * @param int $lockMode
      * @return object The loaded and managed entity instance or NULL if the entity can not be found.
-     * @todo Check identity map? loadById method? Try to guess whether $criteria is the id?
      */
     public function load(array $criteria, $entity = null, $assoc = null, array $hints = array(), $lockMode = 0)
     {
@@ -843,7 +839,6 @@ class BasicEntityPersister
      * @param int $offset
      * @param array $orderBy
      * @return string
-     * @todo Refactor: _getSelectSQL(...)
      */
     protected function _getSelectEntitiesSQL(array $criteria, $assoc = null, $lockMode = 0, $limit = null, $offset = null, array $orderBy = null)
     {
@@ -913,7 +908,6 @@ class BasicEntityPersister
      * Subclasses may or may not do the same.
      *
      * @return string The SQL fragment.
-     * @todo Rename: _getSelectColumnsSQL()
      */
     protected function _getSelectColumnListSQL()
     {
@@ -961,7 +955,7 @@ class BasicEntityPersister
                         $columnList .= $assoc2ColumnSQL;
                     }
                 }
-                $this->_selectJoinSql .= ' LEFT JOIN'; // TODO: Inner join when all join columns are NOT nullable.
+                $this->_selectJoinSql .= ' LEFT JOIN';
                 $first = true;
                 if ($assoc['isOwningSide']) {
                     $this->_selectJoinSql .= ' ' . $eagerEntity->table['name'] . ' ' . $this->_getSQLTableAlias($eagerEntity->name, $assocAlias) .' ON ';
@@ -1133,7 +1127,6 @@ class BasicEntityPersister
      *
      * @param string $className
      * @return string The SQL table alias.
-     * @todo Reconsider. Binding table aliases to class names is not such a good idea.
      */
     protected function _getSQLTableAlias($className, $assocName = '')
     {

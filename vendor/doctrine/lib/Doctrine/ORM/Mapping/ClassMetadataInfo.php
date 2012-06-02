@@ -162,7 +162,6 @@ class ClassMetadataInfo implements ClassMetadata
      * READ-ONLY: The namespace the entity class is contained in.
      *
      * @var string
-     * @todo Not really needed. Usage could be localized.
      */
     public $namespace;
 
@@ -291,7 +290,6 @@ class ClassMetadataInfo implements ClassMetadata
      * This is the reverse lookup map of $_fieldNames.
      *
      * @var array
-     * @todo We could get rid of this array by just using $fieldMappings[$fieldName]['columnName'].
      */
     public $columnNames = array();
 
@@ -423,7 +421,6 @@ class ClassMetadataInfo implements ClassMetadata
      * READ-ONLY: The ID generator used for generating IDs for this class.
      *
      * @var AbstractIdGenerator
-     * @todo Remove!
      */
     public $idGenerator;
 
@@ -441,7 +438,6 @@ class ClassMetadataInfo implements ClassMetadata
      * </code>
      *
      * @var array
-     * @todo Merge with tableGeneratorDefinition into generic generatorDefinition
      */
     public $sequenceGeneratorDefinition;
 
@@ -450,7 +446,6 @@ class ClassMetadataInfo implements ClassMetadata
      * TABLE generation strategy.
      *
      * @var array
-     * @todo Merge with tableGeneratorDefinition into generic generatorDefinition
      */
     public $tableGeneratorDefinition;
 

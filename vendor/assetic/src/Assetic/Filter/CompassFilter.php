@@ -261,14 +261,13 @@ class CompassFilter implements FilterInterface
         if (null !== $this->scss) {
             $type = $this->scss ? 'scss' : 'sass';
         } elseif ($path) {
-            // FIXME: what if the extension is something else?
             $type = pathinfo($path, PATHINFO_EXTENSION);
         } else {
             $type = 'scss';
         }
 
         $tempName = tempnam($tempDir, 'assetic_compass');
-        unlink($tempName); // FIXME: don't use tempnam() here
+        unlink($tempName);
 
         // input
         $pb->add($input = $tempName.'.'.$type);

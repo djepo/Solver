@@ -101,7 +101,7 @@ abstract class Type
     /**
      * Gets the default length of this type.
      *
-     * @todo Needed?
+
      */
     public function getDefaultLength(AbstractPlatform $platform)
     {
@@ -120,7 +120,6 @@ abstract class Type
      * Gets the name of this type.
      *
      * @return string
-     * @todo Needed?
      */
     abstract public function getName();
 

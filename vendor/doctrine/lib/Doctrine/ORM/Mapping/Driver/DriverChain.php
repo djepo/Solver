@@ -32,7 +32,6 @@ use Doctrine\ORM\Mapping\Driver\Driver,
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
- * @todo Rename: MappingDriverChain or MetadataDriverChain
  */
 class DriverChain implements Driver
 {

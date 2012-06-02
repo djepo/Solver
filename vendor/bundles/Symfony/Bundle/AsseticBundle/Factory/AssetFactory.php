@@ -48,7 +48,6 @@ class AssetFactory extends BaseAssetFactory
     /**
      * Adds support for bundle notation file and glob assets and parameter placeholders.
      *
-     * FIXME: This is a naive implementation of globs in that it doesn't
      * attempt to support bundle inheritance within the glob pattern itself.
      */
     protected function parseInput($input, array $options = array())

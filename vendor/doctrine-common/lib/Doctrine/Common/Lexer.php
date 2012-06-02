@@ -26,7 +26,6 @@ namespace Doctrine\Common;
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
- * @todo Rename: AbstractLexer
  */
 abstract class Lexer
 {

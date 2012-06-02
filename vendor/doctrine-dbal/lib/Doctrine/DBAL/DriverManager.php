@@ -33,7 +33,6 @@ final class DriverManager
      * List of supported drivers and their mappings to the driver classes.
      *
      * @var array
-     * @todo REMOVE. Users should directly supply class names instead.
      */
      private static $_driverMap = array(
             'pdo_mysql'  => 'Doctrine\DBAL\Driver\PDOMySql\Driver',

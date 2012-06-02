@@ -33,7 +33,6 @@ use Doctrine\DBAL\Schema\Index,
  * @author Roman Borschel <roman@code-factory.org>
  * @author Jonathan H. Wage <jonwage@gmail.com>
  * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @todo Rename: MsSQLPlatform
  */
 class MsSqlPlatform extends AbstractPlatform
 {

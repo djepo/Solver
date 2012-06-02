@@ -413,7 +413,6 @@ public function <methodName>()
     }
 
     /**
-     * @todo this won't work if there is a namespace in brackets and a class outside of it.
      * @param string $src
      */
     private function _parseTokensInEntityFile($src)

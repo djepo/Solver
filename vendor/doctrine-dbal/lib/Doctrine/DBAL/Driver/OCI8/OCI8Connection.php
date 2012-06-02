@@ -104,7 +104,7 @@ class OCI8Connection implements \Doctrine\DBAL\Driver\Connection
     
     public function lastInsertId($name = null)
     {
-        //TODO: throw exception or support sequences?
+
     }
 
     /**

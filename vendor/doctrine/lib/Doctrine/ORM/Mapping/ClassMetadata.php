@@ -156,7 +156,6 @@ class ClassMetadata extends ClassMetadataInfo
      *
      * @param object $entity
      * @param mixed $id
-     * @todo Rename to assignIdentifier()
      */
     public function setIdentifierValues($entity, array $id)
     {
@@ -209,7 +208,6 @@ class ClassMetadata extends ClassMetadataInfo
      * Creates a string representation of this instance.
      *
      * @return string The string representation of this instance.
-     * @todo Construct meaningful string representation.
      */
     public function __toString()
     {
@@ -234,16 +232,16 @@ class ClassMetadata extends ClassMetadataInfo
         // This metadata is always serialized/cached.
         $serialized = array(
             'associationMappings',
-            'columnNames', //TODO: Not really needed. Can use fieldMappings[$fieldName]['columnName']
+            'columnNames', 
             'fieldMappings',
             'fieldNames',
             'identifier',
-            'isIdentifierComposite', // TODO: REMOVE
+            'isIdentifierComposite', 
             'name',
-            'namespace', // TODO: REMOVE
+            'namespace', 
             'table',
             'rootEntityName',
-            'idGenerator', //TODO: Does not really need to be serialized. Could be moved to runtime.
+            'idGenerator',
         );
 
         // The rest of the metadata is only serialized if necessary.

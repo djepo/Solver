@@ -68,7 +68,6 @@ class ElementNode implements NodeInterface
         if ($this->namespace == '*') {
             $el = strtolower($this->element);
         } else {
-            // FIXME: Should we lowercase here?
             $el = sprintf('%s:%s', $this->namespace, $this->element);
         }
 

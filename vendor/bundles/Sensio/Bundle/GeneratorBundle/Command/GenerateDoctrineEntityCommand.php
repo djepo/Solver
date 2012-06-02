@@ -222,7 +222,6 @@ EOT
         $output->writeln('');
 
         $fieldValidator = function ($type) use ($types) {
-            // FIXME: take into account user-defined field types
             if (!in_array($type, $types)) {
                 throw new \InvalidArgumentException(sprintf('Invalid type "%s".', $type));
             }

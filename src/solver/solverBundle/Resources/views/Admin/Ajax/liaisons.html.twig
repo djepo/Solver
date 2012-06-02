@@ -228,7 +228,31 @@
                              
                              if (prefixe_id!=null) {
                                 node.attr("id",prefixe_id+json_data.id);   //insertion de l'id du noeud en fonction de son préfixe et de l'id renvoyée                               
-                             }                                                          
+                             }
+                             
+                             //rafraichissement de tous les noeuds ayant le même id
+                             var parent_found=false;
+                             $("#container_treeview li").each(function(){
+                                id_parcouru=$(this).attr("id");
+                                
+                                if(id_parcouru==parent_id)
+                                {
+                                    parent_found=true;
+                                    var child_found=false;
+                                    
+                                    $(this).children('ul').children('li').each(function(){                                        
+                                        if($(this).attr('id')==prefixe_id+json_data.id) {child_found=true}                                        
+                                    });
+                                }
+                                if (parent_found==true && child_found==false )
+                                    {
+                                        //alert ('parent trouvé, mais enfant attendu non trouvé, il va falloir ajouter.');
+                                        $('#container_treeview').jstree("create_node", $(this),"last",{attr: {"rel": "probleme", "id": prefixe_id+json_data.id}, data: libelle,});
+                                        parent_found=false;
+                                        child_found=false;
+                                    }
+                                    
+                            });                             
                          },
                 error:   function (jqXHR, textStatus, errorThrown)
                          {

@@ -8,8 +8,7 @@
 	$("#container_treeview").jstree({
             "html_data" : {
                 "ajax" : {
-                    "url" : "{{url('admin_ajax_liaisonsTreeviewLoad')}}",
-                    //"data" :    function (n) {return { id : n.attr ? n.attr("id"):0};},
+                    "url" : "{{url('admin_ajax_liaisonsTreeviewLoad')}}",                    
                     "data" :    function (n) {
                                                 if (n.attr) {
                                                     return {id:n.attr('id')};
@@ -20,19 +19,22 @@
                                              },
                     }
             },
-            "plugins" : [ "themes", "ui", "html_data", "hotkeys","crrm", "contextmenu", "types" ],
-            "core": {'animation':100},
-            "contextmenu": {"select_node":  true,
-                            "show_at_node": false,
-                            "items":        MenuPerso,
-                           },
-            "themes":   {"theme": "default"},
-            "types":    {
+            "plugins" :     [ "themes", "ui", "html_data", "hotkeys","crrm", "contextmenu", "types", "checkbox"],
+            "core":         {'animation':100},
+            "checkbox":     {   "two_state":        true,
+                                "real_checkboxes":  true,
+                            },
+            "contextmenu":  {   "select_node":  true,
+                                "show_at_node": false,
+                                "items":        MenuPerso,
+                            },
+            "themes":       {"theme": "default"},
+            "types":        {
                             "valid_children":    ["root"],
                             "types":    {
                                             "root":     {
                                                             "delete_node":  false,
-                                                            "rename_node":  false,
+                                                            "rename_node":  false,                                                            
                                                             "icon": {
                                                                         "image":    "{{asset('bundles/solvermain/images/treeview/root_icon.png')}}",
                                                                     },
@@ -53,7 +55,7 @@
                                                                     },
                                                         },
                                         },
-                        },
+                            },
 	});
     });
 
@@ -120,6 +122,11 @@
 
         return items;   
     }
+    
+    $("#container_treeview").bind("loaded.jstree", function(e, data) {
+        //cache la checkbox du root
+        $("#root").children('a').find('ins.jstree-checkbox').hide();
+    });
     
     //redirection du renommage par défaut dans la fonction rename
     $(function() {

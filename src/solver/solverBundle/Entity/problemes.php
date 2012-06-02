@@ -66,7 +66,7 @@ class problemes
     private $solving_log_probleme_amont;
     
     /**
-     * @ORM\OneToMany(targetEntity="solutions", mappedBy="probleme")     
+     * @ORM\OneToMany(targetEntity="solutions", mappedBy="probleme", cascade={"remove", "persist"})     
      */
     private $solutions;
     

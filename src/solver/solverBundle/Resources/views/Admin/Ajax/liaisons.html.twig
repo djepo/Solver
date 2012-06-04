@@ -1,6 +1,11 @@
-<h2>Liaisons</h2>
-
-<div id="container_treeview" style="overflow: auto;min-height: 450px;">
+<div class="ui-widget-content">
+    <div id="container_treeview" style="overflow: auto;min-height: 350px; max-height: 350px;">
+    </div>
+</div>
+<div class="ui-widget-content" style="margin-top: 10px;">
+    <img id="node_detail_ajax_indicator" src="{{asset('bundles/solvermain/images/indicator_snake.gif')}}" style="display: none;"></img>
+    <div id="node_detail" style="min-height: 200px;">
+    </div>
 </div>
 
 <script>
@@ -29,7 +34,7 @@
                                 "items":        MenuPerso,
                             },
             "themes":       {"theme": "default"},
-            "types":        {
+            "types":        {                            
                             "valid_children":    ["root"],
                             "types":    {
                                             "root":     {
@@ -126,8 +131,15 @@
     $("#container_treeview").bind("loaded.jstree", function(e, data) {
         //cache la checkbox du root
         $("#root").children('a').find('ins.jstree-checkbox').hide();
+        $("#container_treeview").jstree("select_node","#root");
     });
 
+    //redirection de la selection par défaut dans la fonction select_node
+    $(function() {
+        $("#container_treeview").bind('select_node.jstree', function(e, data){
+            select_node(e,data);
+        });
+    });
     //redirection du renommage par défaut dans la fonction rename
     $(function() {
         $("#container_treeview").bind('rename.jstree', function(e, data){
@@ -152,6 +164,44 @@
             check_node (e, data);
         });
     });
+
+    var displaying_detail;
+    function select_node (e, data)
+    {
+        var node=data.rslt.obj;
+        var node_id=node.attr('id');
+        var node_type=node.attr('rel');
+        var node_lib=node.children('a').text();
+        
+        if (displaying_detail) {displaying_detail.abort();}
+        
+        $('#node_detail_ajax_indicator').show();
+        
+        //$("#node_detail").html("");   //passe la div a vierge
+        
+        displaying_detail=$.ajax({
+            async:  true,
+            type:   "POST",
+            url:    '{{url('admin_ajax_liaisonstreeview_nodedetail')}}',
+            data:   {   "type": node_type,
+                        "id":   node_id,
+                    },
+            success: function(data, textStatus, jqXHR)
+                            {
+                                $("#node_detail").html(data);
+                            },
+            error:  function (jqXHR, textStatus, errorThrown)
+                            {
+                                if (errorThrown!="abort")
+                                {
+                                    displayError(jqXHR.responseText);
+                                    $.jstree.rollback(data.rlbk);
+                                }
+                            },
+        });
+        
+        $('#node_detail_ajax_indicator').hide();
+    }
 
     function rename(e, data)
     {
@@ -182,13 +232,13 @@
                                     if(id2==id)
                                     {
                                         valins=$(this).children("a > ins").text();
-                                        $(this).children("a").html('<ins class="jstree-icon">&nbsp;</ins>'+libelle);
+                                        $(this).children("a").html('<ins class="jstree-checkbox">&nbsp</ins><ins class="jstree-icon">&nbsp;</ins>'+libelle);
 
                                     }
                                 });
                             },
                         error:  function (jqXHR, textStatus, errorThrown)
-                            {
+                            {                                
                                 displayError(jqXHR.responseText);
                                 $.jstree.rollback(data.rlbk);
                             }
@@ -200,8 +250,9 @@
                 $.jstree.rollback(data.rlbk);
             };
         }
-
-        node.children("a").attr("class","jstree-clicked");  //on enleve l'indicateur ajax pour remettre l'icone par défaut
+        
+        $("#container_treeview").jstree("select_node",node);    //sélection du noeud renommé (pour déclencher l'evenement select, qui mettra a jour le formulaire avec le libellé renommé)
+        node.children("a").attr("class","jstree-clicked");      //on enleve l'indicateur ajax pour remettre l'icone par défaut
     }
 
     function create (e, data)
@@ -251,25 +302,26 @@
                              }
 
                              //rafraichissement de tous les noeuds ayant le même id
-                             var parent_found=false;
+                             var parent_found=false;    //init du flag parent_trouvé
                              $("#container_treeview li").each(function(){
                                 id_parcouru=$(this).attr("id");
 
                                 if(id_parcouru==parent_id)
                                 {
-                                    parent_found=true;
-                                    var child_found=false;
+                                    parent_found=true;      //on a trouvé le parent
+                                    var child_found=false;  //init du flag enfant trouvé
 
                                     $(this).children('ul').children('li').each(function(){
-                                        if($(this).attr('id')==prefixe_id+json_data.id) {child_found=true}
+                                        if($(this).attr('id')==prefixe_id+json_data.id) {child_found=true}  //on a trouvé l'enfant
                                     });
                                 }
-                                if (parent_found==true && child_found==false )
+                                if (parent_found==true && child_found==false )  //si on a un parent, avec l'enfant recherché non présent
                                     {
-                                        //alert ('parent trouvé, mais enfant attendu non trouvé, il va falloir ajouter.');
-                                        $('#container_treeview').jstree("create_node", $(this),"last",{attr: {"rel": "probleme", "id": prefixe_id+json_data.id}, data: libelle,});
-                                        parent_found=false;
-                                        child_found=false;
+                                        //on ajoute l'enfant
+                                        $('#container_treeview').jstree("create_node", $(this),"last",{attr: {"rel": node.attr('rel'), "id": prefixe_id+json_data.id}, data: libelle,});
+                                        $(this).children("ul").children("li:last").toggleClass('jstree-unchecked jstree-checked');   //on coche le noeud comme étant affiché
+                                        parent_found=false; //reset des flags
+                                        child_found=false;  //reset des flags
                                     }
 
                             });
@@ -281,7 +333,9 @@
                          },
         });
 
-        node.children("a").attr("class","jstree-clicked");  //fin de l'icone de travail ajax, remise en place de l'icone par défaut
+        $("#container_treeview").jstree("select_node",node);    //sélection du noeud renommé (pour déclencher l'evenement select, qui mettra a jour le formulaire avec le libellé créé)        
+        $(node).toggleClass('jstree-unchecked jstree-checked');   //on coche le noeud comme étant affiché
+        node.children("a").attr("class","jstree-clicked");      //fin de l'icone de travail ajax, remise en place de l'icone par défaut
 
     }
 
@@ -336,6 +390,9 @@
                             displayError(jqXHR.responseText);
                         },
         });
+        
+        $("#container_treeview").jstree("select_node","#root");    //sélection du noeud renommé (pour déclencher l'evenement select, qui mettra a jour le formulaire avec le libellé créé)
+        
     }
 
     function check_node(e, data)
@@ -382,15 +439,15 @@
                                 },
                 });
 
-
-
+        $("#container_treeview").jstree("select_node",node);    //sélection du noeud renommé (pour déclencher l'evenement select, qui mettra a jour le formulaire avec le libellé créé)        
         node.children("a").attr("class","jstree-clicked");  //fin de l'icone de travail ajax, remise en place de l'icone par défaut
+        
     }
 
     function displayError(text)
     {
         var $error_dialog= $('<div></div>').html(text)
-                                     .dialog({  resizable:  false,
+                                     .dialog({  //resizable:  false,
                                                 modal:      true,
                                                 title:      "Erreur",
                                                 dialogClass:"error",

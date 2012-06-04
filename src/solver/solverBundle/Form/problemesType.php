@@ -18,6 +18,7 @@ class problemesType extends AbstractType
                                           )
                  )
             ->add('existe','checkbox',array('required'=>false))
+            ->add('affiche','checkbox',array('required'=>false))
         ;
     }
 

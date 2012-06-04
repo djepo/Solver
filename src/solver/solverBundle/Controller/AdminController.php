@@ -281,15 +281,15 @@ class AdminController extends Controller {
             if (substr($chain[$level], 0, 1) == 'e') {
                 //level 0, on va renvoyer les problèmes liés à l'entité
                 $entite_id = substr($chain[$level], 1, strlen($chain[$level]) - 1);
-                $problemes = $em->getRepository('solversolverBundle:problemes')->findBy(array('entite' => $entite_id, 'existe'=>true), array('libelle' => 'ASC'));
+                $problemes = $em->getRepository('solversolverBundle:problemes')->findBy(array('entite' => $entite_id, 'existe' => true), array('libelle' => 'ASC'));
                 return $this->render('solversolverBundle:Admin/Ajax/Treeview:problemesParEntite.html.twig', array('problemes' => $problemes,));
             } else {
                 //level supérieur à 0, on va renvoyer les problèmes liés à un problème
                 $probleme_id = substr($chain[$level], 1, strlen($chain[$level]) - 1);
-                                
+
                 //$problemes = $em->getRepository('solversolverBundle:probleme_probleme')->findBy(array('probleme_aval' => $probleme_id), array());
-                $problemes = $em->getRepository('solversolverBundle:probleme_probleme')->getProblemesAmont($probleme_id);                
-                $solutions = $em->getRepository("solversolverBundle:solutions")->findBy(array("probleme" => $probleme_id, 'existe'=>true), array("priorite" => "ASC", "titre" => "ASC"));
+                $problemes = $em->getRepository('solversolverBundle:probleme_probleme')->getProblemesAmont($probleme_id);
+                $solutions = $em->getRepository("solversolverBundle:solutions")->findBy(array("probleme" => $probleme_id, 'existe' => true), array("priorite" => "ASC", "titre" => "ASC"));
 
                 return $this->render('solversolverBundle:Admin/Ajax/Treeview:problemesParProbleme.html.twig', array('problemes' => $problemes,
                             'solutions' => $solutions,
@@ -298,7 +298,7 @@ class AdminController extends Controller {
             }
         } else {
             //pas d'id définie, on va donc renvoyer la liste des entités
-            $entites = $em->getRepository('solversolverBundle:entites')->findBy(array('existe'=>true), array('libelle' => 'ASC'));
+            $entites = $em->getRepository('solversolverBundle:entites')->findBy(array('existe' => true), array('libelle' => 'ASC'));
             return $this->render('solversolverBundle:Admin/Ajax/Treeview:entites.html.twig', array('entites' => $entites,));
         }
     }
@@ -565,7 +565,7 @@ class AdminController extends Controller {
         $response = new Response(json_encode(array("type" => "success", "libelle" => "")));
 
         if (!$id || !$type) {
-            $response = new Response("Erreur de passage de paramètres",400);
+            $response = new Response("Erreur de passage de paramètres", 400);
         } else {
 
             $em = $this->getDoctrine()->getEntityManager();
@@ -616,24 +616,27 @@ class AdminController extends Controller {
     /**
      * @Route("/Ajax/Liaisons/Treeview/Check", name="admin_ajax_liaisonstreeview_check")
      */
-    public function admin_ajax_liaisonsTreeviewCheckAction()
-    {
+    public function admin_ajax_liaisonsTreeviewCheckAction() {
         $request = $this->getRequest();
         $id = $request->request->get('id');
         $id = substr($id, 1, strlen($id) - 1);
         $type = $request->get('type');
         $value = $request->get('value');
-        
+
         //initialisation de la réponse avec un succès. En cas d'erreur, la variable sera systématiquement redéfinie.
         $response = new Response(json_encode(array("type" => "success", "libelle" => "")));
-        
+
         if (!$id || !$type || !$value) {
-            $response = new Response("Erreur de passage de paramètres",400);
+            $response = new Response("Erreur de passage de paramètres", 400);
         } else {
             $em = $this->getDoctrine()->getEntityManager();
-            if($value=='true') {$value=true;} else {$value=false;}  //les paramètres sont envoyés en string, il faut convertir en booléen pour la valeur de la checkbox
-                                                                    //placé ici, car le tests des paramètres ne passe pas si la valeur est fausse.
-            
+            if ($value == 'true') {
+                $value = true;
+            } else {
+                $value = false;
+            }  //les paramètres sont envoyés en string, il faut convertir en booléen pour la valeur de la checkbox
+            //placé ici, car le tests des paramètres ne passe pas si la valeur est fausse.
+
             switch ($type) {
                 case "root":
                     $response = new Response("Modification du noeud racine interdite.", 400);
@@ -673,9 +676,72 @@ class AdminController extends Controller {
                     break;
             }
         }
-        
+
         $response->headers->set('Content-Type', 'application/json');
         return $response;
-        
     }
+
+    /**
+     * Affichage du détail du noeud sélectionné
+     * 
+     * @Route("/Ajax/Liaisons/Treeview/NodeDetail", name="admin_ajax_liaisonstreeview_nodedetail")
+     */
+    public function admin_ajax_liaisonsTreeview_NodeDetail_Action() {
+        $request = $this->getRequest();
+        $id = $request->request->get('id');
+        $id = substr($id, 1, strlen($id) - 1);
+        $type = $request->get('type');
+
+        if (!$id || !$type) {
+            $response = new Response("Erreur de passage de paramètres", 400);
+            return $response;
+        } else {
+            
+            $em=$this->getDoctrine()->getEntityManager();
+            
+            switch ($type) {
+                case "root":
+                    return $this->render('solversolverBundle:Admin/Ajax/Treeview/node_detail:root.html.twig');
+                    break;
+                case "entite":
+                    $entite = $em->getRepository('solversolverBundle:entites')->find($id);                    
+                    if (!$entite) {
+                        $response = new Response("Entité introuvable", 400);
+                        return $response;
+                    } else {
+                        $form = $this->createForm(new entitesType(), $entite);
+                        return $this->render('solversolverBundle:Admin/Ajax/Treeview/node_detail:entite.html.twig',array('entite'=>$entite,
+                                                                                                                         'form'=>$form->createView()
+                                                                                                                        )
+                                            );
+                    }
+                    break;
+                case "probleme":
+                    $probleme = $em->getRepository('solversolverBundle:problemes')->find($id);                    
+                    if (!$probleme) {
+                        $response = new Response("Problème introuvable", 400);
+                        return $response;
+                    } else {
+                        $form = $this->createForm(new problemesType(), $probleme);
+                        return $this->render('solversolverBundle:Admin/Ajax/Treeview/node_detail:probleme.html.twig',array('probleme'=>$probleme,'form'=>$form->createView()));
+                    }
+                    break;
+                case "solution":
+                    $solution = $em->getRepository('solversolverBundle:solutions')->find($id);                    
+                    if (!$solution) {
+                        $response = new Response("Solution introuvable", 400);
+                        return $response;
+                    } else {
+                        $form = $this->createForm(new solutionsType(), $solution);
+                        return $this->render('solversolverBundle:Admin/Ajax/Treeview/node_detail:solution.html.twig',array('solution'=>$solution,'form'=>$form->createView()));
+                    }
+                    break;
+                default:
+                    $response = new Response("Type de noeud inconnu ou non géré par le contrôleur.", 501);
+                    return $response;
+                    break;
+            }
+        }
+    }
+
 }

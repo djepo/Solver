@@ -10,13 +10,15 @@ class solutionsType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         $builder
-            ->add('libelle')            
+            ->add('titre')
+            ->add('libelle')
             ->add('probleme','entity',array('class'=>'solversolverBundle:problemes',
                                           'property'=>'libelle',
                                           'required'=>true,                                          
                                           )
                  )
             ->add('existe','checkbox',array('required'=>false))
+            ->add('affiche','checkbox',array('required'=>false))
         ;
     }
 

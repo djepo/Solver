@@ -1,4 +1,10 @@
-<h2>{{problemes|length}} symptômes dans la base</h2>
+{# comptage du nombre de problèmes liés à l'entité #}
+{%set problemeCount=0%}
+{%for probleme in problemes if probleme.existe==true and probleme.affiche==true%}
+    {%set problemeCount=problemeCount+1 %}
+{% endfor %}
+
+<h2>{{problemeCount}} symptômes dans la base</h2>
 <h3>(classement par ordre d'occurence)</h3>
 
 <div style="overflow: auto">
@@ -7,7 +13,7 @@
 {% for probleme in problemes %}
 #}
         
-{% for s in symptomes %}
+{% for s in symptomes if s.affiche==true and s.existe==true%}
         {%if s.total!=0%}
             {% set pourcentage=s.occurenceResolutionPb/s.total*100%}
         {%else%}

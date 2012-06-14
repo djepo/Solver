@@ -10,14 +10,14 @@ class problemesType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         $builder
-            ->add('libelle')
-            //->add('entite')
-            ->add('entite','entity',array('class'=>'solversolverBundle:entites',
+            ->add('libelle')            
+            /*->add('entite','entity',array('class'=>'solversolverBundle:entites',
                                           'property'=>'libelle',
                                           'required'=>false,                                          
                                           )
-                 )
-            ->add('existe','checkbox',array('required'=>false))
+                 )             
+             */
+            //->add('existe','checkbox',array('required'=>false))
             ->add('affiche','checkbox',array('required'=>false))
         ;
     }

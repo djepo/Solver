@@ -744,4 +744,122 @@ class AdminController extends Controller {
         }
     }
 
+    /**
+     * MISE A JOUR DES ENTITES PAR LES FORMULAIRES DE DETAIL DE NOEUDS DANS LE TREEVIEW 
+     */
+    
+    /**
+     *
+     * @param int $id Identifiant de l'entité
+     * @return \Symfony\Component\HttpFoundation\Response Réponse de retour vierge avec un code d'erreur ou de succès selon le cas
+     * @throws type 
+     * 
+     * @Route("/Ajax/Liaisons/Treeview/NodeDetail/Entite/{id}/Update", name="admin_ajax_liaisonstreeview_nodedetail_EntiteUpdate") 
+     */
+    public function admin_ajax_liaisonsTreeview_NodeDetail_Entite_UpdateAction($id)
+    {
+        $request = $this->getRequest();
+        
+        if($request->isXmlHttpRequest()){
+            $em = $this->getDoctrine()->getEntityManager();
+            $entite = $em->getRepository('solversolverBundle:entites')->find($id);
+            if ($entite){
+        
+                $form = $this->createForm(new entitesType(), $entite);
+                $form->bindRequest($request);
+                        
+                if ($form->isValid()){                
+                    
+                    $em->persist($entite);
+                    $em->flush();
+                
+                    return new Response('success',202);
+                
+                } else {
+                    return new Response('Invalid validation',500);
+                }
+            } else {
+                return new Response('Entity\'s id not found',400);
+            }            
+        } else {
+            return new Response('Not an ajax request',403);
+        }        
+    }
+    
+    /**
+     *
+     * @param int $id Identifiant du problème
+     * @return \Symfony\Component\HttpFoundation\Response Réponse de retour vierge avec un code d'erreur ou de succès selon le cas
+     * @throws type 
+     * 
+     * @Route("/Ajax/Liaisons/Treeview/NodeDetail/Probleme/{id}/Update", name="admin_ajax_liaisonstreeview_nodedetail_ProblemeUpdate") 
+     */
+    public function admin_ajax_liaisonsTreeview_NodeDetail_Probleme_UpdateAction($id)
+    {
+        $request = $this->getRequest();
+        
+        if($request->isXmlHttpRequest()){
+            $em = $this->getDoctrine()->getEntityManager();
+            $probleme = $em->getRepository('solversolverBundle:problemes')->find($id);
+            if ($probleme){
+        
+                $form = $this->createForm(new problemesType(), $probleme);
+                $form->bindRequest($request);
+                        
+                if ($form->isValid()){                
+                    
+                    $em->persist($probleme);
+                    $em->flush();
+                
+                    return new Response('success',202);
+                
+                } else {
+                    return new Response('Invalid validation',500);
+                }
+            } else {
+                return new Response('Entity\'s id not found',400);
+            }            
+        } else {
+            return new Response('Not an ajax request',403);
+        }        
+    }
+    
+    /**
+     *
+     * @param int $id Identifiant de la solution
+     * @return \Symfony\Component\HttpFoundation\Response Réponse de retour vierge avec un code d'erreur ou de succès selon le cas
+     * @throws type 
+     * 
+     * @Route("/Ajax/Liaisons/Treeview/NodeDetail/Solution/{id}/Update", name="admin_ajax_liaisonstreeview_nodedetail_SolutionUpdate") 
+     */
+    public function admin_ajax_liaisonsTreeview_NodeDetail_Solution_UpdateAction($id)
+    {
+        $request = $this->getRequest();
+        
+        if($request->isXmlHttpRequest()){
+            $em = $this->getDoctrine()->getEntityManager();
+            $solution = $em->getRepository('solversolverBundle:solutions')->find($id);
+            if ($solution){
+        
+                $form = $this->createForm(new solutionsType(), $solution);
+                $form->bindRequest($request);
+                        
+                if ($form->isValid()){                
+                    
+                    $em->persist($solution);
+                    $em->flush();
+                
+                    return new Response('success',202);
+                
+                } else {
+                    return new Response('Invalid validation',500);
+                }
+            } else {
+                return new Response('Entity\'s id not found',400);
+            }            
+        } else {
+            return new Response('Not an ajax request',403);
+        }        
+    }
+    
 }

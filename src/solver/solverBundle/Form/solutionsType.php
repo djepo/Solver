@@ -12,12 +12,13 @@ class solutionsType extends AbstractType
         $builder
             ->add('titre')
             ->add('libelle')
-            ->add('probleme','entity',array('class'=>'solversolverBundle:problemes',
+            /*->add('probleme','entity',array('class'=>'solversolverBundle:problemes',
                                           'property'=>'libelle',
                                           'required'=>true,                                          
                                           )
-                 )
-            ->add('existe','checkbox',array('required'=>false))
+                 )             
+             */
+            //->add('existe','checkbox',array('required'=>false))
             ->add('affiche','checkbox',array('required'=>false))
         ;
     }

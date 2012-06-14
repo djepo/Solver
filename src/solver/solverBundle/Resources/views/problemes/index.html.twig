@@ -1,9 +1,15 @@
 {%if symptome is defined%}
+    {% set causesSymptomesCount=0 %}
+    {% for i in symptome.problemesamont if i.problemeamont.affiche==true and i.problemeamont.existe==true%}
+        {% set causesSymptomesCount=causesSymptomesCount+1 %}
+    {% endfor %}
+
     <div id="accordionResizer" style="overflow:auto; padding:10px;" class="ui-widget-content">
         <div id="accordion">
             <h3>
                 <a href="#">
-                    {{symptome.libelle}} {%if symptome.problemesamont|length>0%}({{symptome.problemesamont|length}} causes possible) {%endif%}
+                    {#{{symptome.libelle}} {%if symptome.problemesamont|length>0%}({{symptome.problemesamont|length}} causes possible) {%endif%}#}
+                    {{symptome.libelle}} {%if causesSymptomesCount>0%}({{causesSymptomesCount}} causes possible) {%endif%}
                 </a>
             </h3>
             {% set problemes=symptome.problemesamont %}
@@ -17,8 +23,7 @@
             {%for i in symptome.solvinglogproblemeaval%}
                 {%set countTotalRésolutionPb=countTotalRésolutionPb+1%}
             {%endfor%}
-
-
+                
             <div>
                 {# liste des problèmes liés au symptome #}
                 {%include('solversolverBundle:blocs:accordeon_listeProblemesParProbleme.html.twig')%}
@@ -27,9 +32,15 @@
             {%if chaine_problemes is defined %}
                 {#Enchainement des problèmes faisant suite au symptome#}
                 {% set level=1 %}                                               {# initialisation du niveau d'arborescence parcourue#}
-                {% for probleme in chaine_problemes %}
+                {% for probleme in chaine_problemes if probleme.existe==true and probleme.affiche==true%}
+                    {% set causesSymptomesCount=0 %}
+                    {% for i in probleme.problemesamont if i.problemeaval.existe==true and i.problemeaval.affiche==true%}
+                        {% set causesSymptomesCount=causesSymptomesCount+1 %}
+                    {% endfor %}
+                
                     <h3><a href="#">
-                            {{probleme.libelle}} {%if probleme.problemesamont|length>0%}({{probleme.problemesamont|length}} causes possible) {%endif%}
+                            {#{{probleme.libelle}} {%if probleme.problemesamont|length>0%}({{probleme.problemesamont|length}} causes possible) {%endif%}#}
+                            {{probleme.libelle}} {%if causesSymptomesCount>0%}({{causesSymptomesCount}} causes possible) {%endif%}
                         </a>
                     </h3>
                     {% set problemes=probleme.problemesamont %}
@@ -71,7 +82,7 @@
         <div id="conteneur_solution"  style="overflow:auto; padding:10px;margin-top: 10px;  " class="ui-widget-content">        
             <div id="solution">
                 {%if solutions is defined %}
-                    {% for solution in solutions %}
+                    {% for solution in solutions if solution.existe==true and solution.affiche==true %}
                         <h3><a href="#">Solution au problème: {{solution.probleme.libelle}}</a></h3>
                         <div>
                             <h3>{{solution.titre}}</h3>

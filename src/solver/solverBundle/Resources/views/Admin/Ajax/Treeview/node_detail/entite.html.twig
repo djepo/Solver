@@ -1,5 +1,25 @@
 <h2>Détail de l'entité</h2></br>
-<form id="form" action="#" method="post" {{ form_enctype(form) }}>
+<form id="form" action="{{path('admin_ajax_liaisonstreeview_nodedetail_EntiteUpdate', {'id': entite.id})}}" method="post" {{ form_enctype(form) }}>
     {{ form_widget(form) }}                    
     <button id="bouton" type=submit>Ok</button>
 </form>
+
+<script>
+    $('#form').submit(function(){
+        form_serialized=$(this).serialize();
+        
+        $.ajax({
+		type: "POST",
+ 		data: form_serialized,
+ 		url: $(this).attr("action"),
+ 		success: function(retour){
+                            //alert ('success');
+                        },
+                error: function (retour){
+                        alert ('Une erreur s\'est produite.');
+                    },                   
+ 	});
+        
+        return false;
+    });
+</script>

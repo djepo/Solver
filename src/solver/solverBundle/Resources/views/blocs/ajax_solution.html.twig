@@ -3,7 +3,7 @@
     <div id="conteneur_solutions"  style="overflow:auto; padding:10px;margin-top: 10px;  " class="ui-widget-content">
         <div id="solutions">
             {%if solutions|length>0 %}
-                {%for solution in solutions %}
+                {%for solution in solutions  if solution.existe==true and solution.affiche==true %}
                     {%if solution.probleme is defined %}
                         <h3><a href="#">Solution au problème: {{solution.probleme.libelle}}</a></h3>
                         <div>

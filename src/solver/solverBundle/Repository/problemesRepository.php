@@ -31,7 +31,7 @@ class problemesRepository extends EntityRepository
             ->where('e2.id='.$id);
             
         //nombre d'occurences de pb résolus par entité et par symptome                
-        $qb->select('p.id, p.libelle, e.id entite_id, count(sl.id) occurenceResolutionPb, ('.$qb2->getDQL().') total')
+        $qb->select('p.id, p.libelle, p.affiche, p.existe, e.id entite_id, count(sl.id) occurenceResolutionPb, ('.$qb2->getDQL().') total')
            ->from('solver\solverBundle\Entity\problemes','p')
            ->leftjoin('p.solving_log_probleme_aval','sl')
            ->leftjoin('p.entite','e')

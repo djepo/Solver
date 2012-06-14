@@ -1,12 +1,12 @@
 {#utilisé pour la génération du treeview#}
 
 {# ENTITE #}
-{% for entite in entites %}
+{% for entite in entites if entite.existe==true and entite.affiche==true%}
     <ul>
         <li id="{{"entite-"~entite.id}}">            
             <a href="{{path('select_entite',{'entite_id':entite.id})}}">{{entite.libelle}}</a>            
             {# SYMPTOME (=PROBLEME DE BASE) #}
-            {% for probleme in entite.problemes %}
+            {% for probleme in entite.problemes if probleme.existe==true and probleme.affiche==true%}
                 <ul>
                     <li  id="{{"probleme-"~probleme.id}}">                        
                         <a href="{{path('select_entite_pb',{'entite_id': entite.id, 'symptome_id': probleme.id})}}">{{probleme.libelle}}</a>                              

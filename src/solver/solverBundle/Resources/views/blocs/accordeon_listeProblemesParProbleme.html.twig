@@ -2,7 +2,7 @@
     {% if problemes|length>0 %}
         {% set level=problems_chaining|length+1 %}
         
-        {% for probleme in problemes %}        
+        {% for probleme in problemes if probleme.problemeamont.existe==true and probleme.problemeamont.affiche==true%}        
             {%set mémo=problems_chaining %} {# Mémorisation de l'enchainement, pour réinjection ultérieure#}
             {% set problems_chaining=problems_chaining|merge([probleme.problemeamont.id]) %}    {# mémorisation du problème actuellement parcouru (ajout a la chaine déjà existante) #}
 

@@ -13,7 +13,7 @@
  		data: form_serialized,
  		url: $(this).attr("action"),
  		success: function(retour){
-                            //alert ('success');
+                            updateTreeview({{entite.id}},$('#solver_solverbundle_entitestype_libelle').val(), $('#solver_solverbundle_entitestype_affiche').attr('checked'));
                         },
                 error: function (retour){
                         alert ('Une erreur s\'est produite.');
@@ -22,4 +22,14 @@
         
         return false;
     });
+    
+    function updateTreeview(id, libelle, checkValue)
+    {  
+        if (checkValue=="checked") {            
+            $('#container_treeview').jstree("check_node",'#e'+id,libelle);
+        } else {            
+            $('#container_treeview').jstree("uncheck_node",'#e'+id,libelle);
+        }        
+        $('#container_treeview').jstree("rename_node",'#e'+id,libelle);                
+    };        
 </script>

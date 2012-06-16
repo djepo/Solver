@@ -13,7 +13,7 @@
  		data: form_serialized,
  		url: $(this).attr("action"),
  		success: function(retour){
-                            //alert ('success');
+                            updateTreeview({{probleme.id}},$('#solver_solverbundle_problemestype_libelle').val(), $('#solver_solverbundle_problemestype_affiche').attr('checked'));
                         },
                 error: function (retour){
                         alert ('Une erreur s\'est produite.');
@@ -22,4 +22,14 @@
         
         return false;
     });
+    
+    function updateTreeview(id, libelle, checkValue)
+    {  
+        if (checkValue=="checked") {            
+            $('#container_treeview').jstree("check_node",'#p'+id,libelle);
+        } else {            
+            $('#container_treeview').jstree("uncheck_node",'#p'+id,libelle);
+        }        
+        $('#container_treeview').jstree("rename_node",'#p'+id,libelle);                
+    };    
 </script>

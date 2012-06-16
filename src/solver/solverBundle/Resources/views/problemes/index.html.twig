@@ -34,7 +34,7 @@
                 {% set level=1 %}                                               {# initialisation du niveau d'arborescence parcourue#}
                 {% for probleme in chaine_problemes if probleme.existe==true and probleme.affiche==true%}
                     {% set causesSymptomesCount=0 %}
-                    {% for i in probleme.problemesamont if i.problemeaval.existe==true and i.problemeaval.affiche==true%}
+                    {% for i in probleme.problemesamont if i.problemeamont.existe==true and i.problemeamont.affiche==true%}
                         {% set causesSymptomesCount=causesSymptomesCount+1 %}
                     {% endfor %}
                 

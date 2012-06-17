@@ -10,6 +10,7 @@
             <link rel="stylesheet" href="{{ asset('bundles/solvermain/css/flashes.css') }}" type="text/css" media="all" />
             <link rel="stylesheet" href="{{ asset('bundles/solvermain/css/buttons.css') }}" type="text/css" media="all" />            
             <link rel="stylesheet" href="{{ asset('bundles/solvermain/js/jquery/css/base/jquery.ui.all.css') }}" type="text/css" media="all" />
+            <link rel="stylesheet" href="{{ asset('bundles/solvermain/HTMLKickStart/css/kickstart.css') }}" type="text/css" media="all" />
         {% endblock %}
 
         {% block included_js %}
@@ -22,6 +23,9 @@
             <script src="{{ asset('bundles/solvermain/js/jquery/ui/minified/jquery.ui.accordion.min.js') }}"></script>
             <script src="{{ asset('bundles/solvermain/js/jquery/jstree/jquery.jstree.js') }}"></script>
             <script src="{{ asset('bundles/solvermain/js/jquery/jstree/jquery.cookie.js') }}"></script> {#requis par jstree#}
+            <script src="{{ asset('bundles/solvermain/js/jquery/jstree/jquery.jstree.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/HTMLKickStart/js/kickstart.js') }}"></script>
+            <script src="{{ asset('bundles/solvermain/HTMLKickStart/js/prettify.js') }}"></script>
         {% endblock %}
 
         <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
@@ -35,9 +39,10 @@
                 </div>
                 <div id="header_right">
                     <form id="header-search" method="GET" action="">
-                        <label for="header-search-field"><span>Quel est votre problème ?</span></label>
-                        <input name="q" id="header-search-field" type="search" placeholder="Quel est votre problème ?" class="medium_txt">
-                        <input type="submit" class="symfony-button-grey" value="OK" />
+                        {#<label for="header-search-field"><span>Quel est votre problème ?</span></label>#}
+                        <span class="icon gray medium" data-icon="s"></span>
+                        <input name="q" id="header-search-field" type="text" placeholder="Quel est votre problème ?" class="medium_txt">
+                        <button type="submit">Ok</button>
                     </form>
                 </div>
                 <div style="clear: both;"></div>
@@ -46,9 +51,9 @@
             <div id="middle">
 
                 {% if app.session.flash('notice') %}
-                <div class="flash-message">
-                    <em>Notice</em>: {{ app.session.flash('notice') }}
-                </div>
+                    <div class="notice warning">
+                        {{ app.session.flash('notice') }}
+                    </div>
                 {% endif %}
 
                 <div id="middle_left">

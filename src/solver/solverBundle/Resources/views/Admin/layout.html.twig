@@ -1,9 +1,12 @@
 {% extends "solvermainBundle:Admin:layout.html.twig" %}
 
-{% block included_js %}
+{% block included_js %}    
     {{parent()}}
     <script src="{{ asset('bundles/solvermain/js/jquery/jquery.form.js') }}"></script>
     <script src="{{ asset('bundles/solvermain/js/jquery/jquery.hotkeys.js') }}"></script>
+    <script src="{{ asset('bundles/solvermain/js/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('bundles/solvermain/js/ckeditor/adapters/jquery.js') }}"></script>
+    <script src="{{ asset('bundles/solvermain/js/ckfinder/ckfinder.js') }}"></script>
 {%endblock%}
 
 {%block admin_content %}    

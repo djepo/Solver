@@ -223,9 +223,15 @@ input[type=text], input[type=password]
     font-size:   12px;
 }
 
+.chart {
+    padding: 0;
+    margin: 0;
+}
+
 .chart li {
     margin-bottom:  1px;
     height:         25px;
+    padding: 0;
 }
 .chart li .graph
 {

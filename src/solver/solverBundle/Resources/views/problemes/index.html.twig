@@ -42,7 +42,9 @@
                             {#{{probleme.libelle}} {%if probleme.problemesamont|length>0%}({{probleme.problemesamont|length}} causes possible) {%endif%}#}
                             {{probleme.libelle}} {%if causesSymptomesCount>0%}({{causesSymptomesCount}} causes possible) {%endif%}
                         </a>
+                            <div class="bouton">C'est mon problème</div>
                     </h3>
+                
                     {% set problemes=probleme.problemesamont %}
 
                     {% set problems_chaining=problems_chaining|merge([probleme.id]) %}    {# mémorisation du problème actuellement parcouru (ajout a la chaine déjà existante) #}
@@ -86,7 +88,7 @@
                         <h3><a href="#">Solution au problème: {{solution.probleme.libelle}}</a></h3>
                         <div>
                             <h3>{{solution.titre}}</h3>
-                            {{solution.libelle}}
+                            {{solution.libelle|raw}}
                         </div>
                     {%endfor%}
                 {%else%}

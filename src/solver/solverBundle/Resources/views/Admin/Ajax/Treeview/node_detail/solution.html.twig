@@ -1,10 +1,39 @@
-<h2>Détail de la solution</h2></br>
+<h4>Détail de la solution</h4>
 <form id="form" action="{{path('admin_ajax_liaisonstreeview_nodedetail_SolutionUpdate', {'id': solution.id})}}" method="post" {{ form_enctype(form) }}>
-    {{ form_widget(form) }}                    
+    
+    {{form_errors(form)}}
+    
+    <div>
+        {{form_label(form.titre, 'Titre')}}
+         <div>
+            {{form_widget(form.titre, {'attr': {'style': 'width: 100%'}})}}
+         </div>
+    </div>
+    <div>
+        {{form_label(form.libelle, 'Libellé')}}
+        <div style="width: 100%">        
+            {{form_widget(form.libelle,{'attr': {'style' : 'width: 100%; max-width: 100%'}})}}
+        </div>
+    </div>
+    <div>
+        {{form_label(form.affiche, 'Afficher ?')}}
+        {{form_widget(form.affiche)}}
+    </div>    
+    
+    {{form_rest(form)}}
+    
     <button id="bouton" type=submit>Ok</button>
 </form>
 
-<script>
+<script>    
+    if(CKEDITOR.instances["solver_solverbundle_solutionstype_libelle"]){
+        CKEDITOR.instances["solver_solverbundle_solutionstype_libelle"].destroy(true);
+    }    
+    var editor=CKEDITOR.replace("solver_solverbundle_solutionstype_libelle");
+    CKFinder.setupCKEditor( editor,'http://{{app.request.server.get('SERVER_NAME')}}{{ asset('bundles/solvermain/js/ckfinder/') }}') ;
+</script>
+
+<script>    
     $('#form').submit(function(){
         form_serialized=$(this).serialize();
         
@@ -31,5 +60,5 @@
             $('#container_treeview').jstree("uncheck_node",'#s'+id,libelle);
         }        
         $('#container_treeview').jstree("rename_node",'#s'+id,libelle);                
-    }; 
+    };
 </script>

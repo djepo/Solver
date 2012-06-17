@@ -8,7 +8,7 @@
                         <h3><a href="#">Solution au problème: {{solution.probleme.libelle}}</a></h3>
                         <div>
                             <h3>{{solution.titre}}</h3>
-                            {{solution.libelle}}
+                            {{solution.libelle|raw}}
                         </div>
                     {%endif%}
                 {%endfor%}

@@ -8,8 +8,55 @@
 
 html{color:#000;background:#FFF}
 
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td{margin:0;padding:0;}table{border-collapse:collapse;border-spacing:0;}fieldset,img{border:0;}address,caption,cite,code,dfn,em,strong,th,var,optgroup{font-style:inherit;font-weight:inherit;}del,ins{text-decoration:none;}li{list-style:none;}caption,th{text-align:left;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup{vertical-align:baseline;}sub{vertical-align:baseline;}legend{color:#000;}input,button,textarea,select,optgroup,option{font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;}input,button,textarea,select{*font-size:100%;}
-
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td{
+    margin:0;padding:0;
+}
+table{
+    border-collapse:collapse;border-spacing:0;
+}
+fieldset,img{
+    border:0;
+}
+address,caption,cite,code,dfn,em,strong,th,var,optgroup{
+    font-style:inherit;font-weight:inherit;
+}
+del,ins{
+    text-decoration:none;
+}
+li{
+    list-style:none;
+}
+caption,th{
+    text-align:left;
+}
+/*
+h1,h2,h3,h4,h5,h6{
+    font-size:100%;font-weight:normal;
+}
+*/
+q:before,q:after{
+    content:'';
+}
+abbr,acronym{
+    border:0;font-variant:normal;
+}
+sup{
+    vertical-align:baseline;
+}
+sub{
+    vertical-align:baseline;
+}
+legend{
+    color:#000;
+}
+/*
+input,button,textarea,select,optgroup,option{
+    font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;
+}
+input,button,textarea,select{
+    *font-size:100%;
+}
+*/
 html, body
 {
     background-color: #EFEFEF;
@@ -25,7 +72,7 @@ body
     color:            #313131;
     min-height: 100%;
     position:relative;
-    width: 900px;
+    /*width: 900px;*/
     padding: 0 10px;
     margin: 0 auto;
 }
@@ -51,6 +98,7 @@ em
     font-style: italic;
 }
 
+/*
 h1, h2, h3
 {
     font-family:    Georgia, "Times New Roman", Times, serif;
@@ -68,6 +116,7 @@ h2
     font-weight:   bold;
     color:         #FFFFFF;
     /* Font is duplicated of body (sans-serif) */
+/*
     font-family:      "Lucida Sans Unicode", "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 
     margin-bottom:    10px;
@@ -77,26 +126,37 @@ h2
     text-transform:   uppercase;
 
 }
-
+*/
+/*
 p
 {
     line-height:    20px;
     padding-bottom: 20px;
 }
+*/
+#wrapper{
+    width: 900px;
+    margin: 0 auto;
+}
 
 #header {
-    height: 80px;
+    height: 60px;
+    line-height: 60px;
     vertical-align: middle;
     display:inline;
+    text-align: center;
 }
 
 #header #header_left{
     float: left;
-    height: 80px;
+    /*height: 60px;*/
+    /*line-height: 60px;*/
+    /*text-align: center;*/
+    width: 250px;
 }
 #header #header_right{
     float:right;
-    height: 80px;
+    /*height: 60px;*/    
 }
 
 #middle
@@ -112,12 +172,12 @@ p
     /*display: inline-block;*/
     width: 800px;
     margin:auto;
-    min-height: 497px;/*600-hauteur header-hauteur footer*/
+    min-height: 700px;
 }
 
 #middle #middle_left {
     float: left;
-    height:497px;
+    height:700px;
     width: 200px;
     background-color: #EFEFEF;
     overflow: hidden;
@@ -127,13 +187,14 @@ p
 .titre_treeview{
     overflow: hidden;
     text-align: center;
-    height:12%
+    height:12%;
+    margin-top: -10px;
 }
 
 .treeview {
-    height:88%;
-    margin-top:-10px;
-    margin-bottom: 1px;
+    height:656px;
+    margin-top:-30px;
+    /*margin-bottom: 1px;*/
     /*padding:10px;*/
     overflow:auto;
 }
@@ -164,22 +225,26 @@ p
     /*float: right;*/
 }
 
+.footer-spacer{
+    height:30px;
+}
+
 #footer{
     bottom:0;
     height:23px;
     width:900px;
-    left:10px;
-    /*position:absolute;*/
+    left:0px;
+    position:fixed;
+    background-image: url(../images/fond_footer.png);
+    color: white;
+    width:100%
 }
 
 .site_title{
-
-    font-family: 'Lucida Sans Unicode', 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
-    font-size: 24px;
-    font-style: italic;
+    font-family: 'arial black', 'Lucida Sans Unicode', 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
+    font-size: 3em;
     font-weight: bold;
-    text-decoration: none;
-    color: navy;
+    text-decoration: none;    
 }
 
 #header-search

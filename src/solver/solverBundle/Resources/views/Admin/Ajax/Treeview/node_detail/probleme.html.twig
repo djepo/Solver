@@ -1,7 +1,30 @@
-<h2>Détail du problème</h2></br>
+<h4>Détail du problème</h4>
 <form id="form" action="{{path('admin_ajax_liaisonstreeview_nodedetail_ProblemeUpdate', {'id': probleme.id})}}" method="post" {{ form_enctype(form) }}>
-    {{ form_widget(form) }}                    
-    <button id="bouton" type=submit>Ok</button>
+    {#{{ form_widget(form) }}#}
+            
+    {{form_errors(form)}}
+    
+    <div>
+        {{form_label(form.libelle, 'Titre')}}
+         <div>
+            {{form_widget(form.libelle, {'attr': {'style': 'width: 100%'}})}}
+         </div>
+    </div>        
+        
+    <hr>
+    
+    <div>
+        <h5>Options</h5>
+        {{form_label(form.affiche, 'Afficher ?')}}
+        {{form_widget(form.affiche)}}
+    </div>    
+    
+    {{form_rest(form)}}
+    
+    <hr> 
+    
+    <button id="bouton" class="button green" type=submit style='width:100%'>Ok</button>
+    
 </form>
 
 <script>

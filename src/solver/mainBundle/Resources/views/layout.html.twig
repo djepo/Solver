@@ -40,9 +40,9 @@
                 <div id="header_right">
                     <form id="header-search" method="GET" action="">
                         {#<label for="header-search-field"><span>Quel est votre problème ?</span></label>#}
-                        <span class="icon gray medium" data-icon="s"></span>
+                        
                         <input name="q" id="header-search-field" type="text" placeholder="Quel est votre problème ?" class="medium_txt">
-                        <button type="submit">Ok</button>
+                        <button type="submit" class='button pill' style='height: 32px; line-height: 0px;'>Ok</button>
                     </form>
                 </div>
                 <div style="clear: both;"></div>
@@ -63,7 +63,7 @@
                         </div>
 
                         <div class="conteneur_treeview">
-                            <div class="titre_treeview"><h2 style="margin-bottom:0px;">Arborescence de recherche</h2></div>
+                            <div class="titre_treeview"><h6 style="margin-bottom:0px;">Arborescence de recherche</h6></div>
                             <div class="treeview">
                                 {%include "solversolverBundle:blocs:treeview_listeProblemesParEntite.html.twig" %}
                             </div>
@@ -84,11 +84,14 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="footer-spacer"></div>
 
                     <div id="footer">
                         footer
                     </div>
                 </div>
+            
 
         {% block javascripts %}
             {# Cacher / montrer treeview #}

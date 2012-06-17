@@ -15,14 +15,19 @@
             {{form_widget(form.libelle,{'attr': {'style' : 'width: 100%; max-width: 100%'}})}}
         </div>
     </div>
+    
+    <hr>
+    
     <div>
+        <h5>Options</h5>
         {{form_label(form.affiche, 'Afficher ?')}}
         {{form_widget(form.affiche)}}
     </div>    
     
     {{form_rest(form)}}
     
-    <button id="bouton" type=submit>Ok</button>
+    <hr>    
+    <button id="bouton" class="button green" type=submit style='width:100%'>Ok</button>
 </form>
 
 <script>    
